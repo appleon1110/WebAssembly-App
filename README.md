@@ -1,48 +1,46 @@
-# 專案概述：雲端檔案管理模擬系統 (Blazor WASM)
+# 雲端檔案管理模擬系統 (Blazor WebAssembly)
 
-本專案是一個基於 **Blazor WebAssembly** 的單頁應用程式（SPA），旨在模擬雲端檔案管理系統的核心功能。
+本專案為以 `Blazor WebAssembly` 實作的雲端檔案管理模擬系統，示範樹狀目錄顯示、遍歷演算法（Visitor）、大小計算、依副檔名搜尋、Tag 管理與自訂 XML 匯出，以及操作日誌（造訪路徑 / traversal log）展示。
+
+---
 
 ## 核心功能
-
-* **樹狀目錄呈現**：直觀顯示資料夾與檔案的層級結構。
-* **空間統計**：精確計算目錄總檔案大小。
-* **進階搜尋**：支援依副檔名進行篩選。
-* **資料匯出**：自訂 XML 序列化功能，產生標準化報表。
-* **執行日誌**：即時記錄（Process Logging）系統遍歷與操作過程。
-
----
-
-## 主要檔案與職責分工
-
-| 檔案名稱 | 職責說明 |
-| --- | --- |
-| **Models/FileSystem.cs** | 定義核心資料模型。採用 **Composite 模式**區分 Folder 與 File，並實作 `Accept` 方法支援 Visitor 模式。 |
-| **Models/Visitors.cs** | 演算法實作區。包含 `SizeCalculator`（大小計算）與 `FileSearcher`（搜尋），支援 Logging 回傳機制。 |
-| **Shared/FileNode.razor** | 遞迴 UI 元件。負責渲染樹狀結構，具備擴充展開/摺疊功能的潛力。 |
-| **Pages/Home.razor** | 核心 UI 控制器。負責使用者互動、呼叫各類 Visitor、處理 XML 匯出及 Console 資訊顯示。 |
-| **Models/FileSystemXmlSerializer.cs** | 自訂 XML 序列化工具。負責將物件轉換為標籤正規化、簡潔易讀的 XML 結構。 |
+- 樹狀目錄呈現（遞迴元件：`Shared/FileNode.razor`）
+- 空間統計（`Models/Visitors.cs` → `SizeCalculator`）
+- 進階搜尋（`FileSearcher`，依副檔名）
+- 自訂 XML 匯出（`Models/FileSystemXmlSerializer.cs`）
+- 執行日誌（造訪路徑 / traversal log，顯示於頁面右側 Console）
 
 ---
 
-## 設計模式應用
-
-### 1. Composite (組合模式)
-
-* **結構**：`Folder` 類別包含 `List<FileSystemItem>`，可遞迴組合子資料夾或檔案。
-* **優勢**：統一了單一檔案與容器資料夾的操作邏輯，利於遞迴遍歷、UI 渲染與序列化。
-
-### 2. Visitor (訪問者模式)
-
-* **結構**：將「演算法」（如計算大小、搜尋、日誌記錄）從「資料結構」（檔案系統）中分離。
-* **優勢**：若需新增功能（例如：權限檢查），只需實作新的 `IFileSystemVisitor`，無需修改現有的模型類別。
+## 已實作之進階功能（Bonus）
+- 排序：可依「名稱 / 大小 / 副檔名」升/降序（在工具列按鈕）  
+- 編輯：複製 / 貼上 / 刪除（單一項目）  
+- 標籤（Tag）：支援多重標籤，預設三種顏色
+  - `Urgent` → 紅色（Bootstrap `bg-danger`）
+  - `Work`   → 藍色（Bootstrap `bg-primary`）
+  - `Personal` → 綠色（Bootstrap `bg-success`）
+- 狀態管理：Undo / Redo（以 Command Pattern 實作）
 
 ---
 
-## 資料流 (Data Flow)
+## 主要檔案與職責
+- `Models/FileSystem.cs`：模型（`FileSystemItem`／`Folder`／`WordFile`／`ImageFile`／`TextFile`），含 `Tags` 屬性與 `Accept`。  
+- `Models/Visitors.cs`：Visitor 演算法（`SizeCalculator`、`FileSearcher`），支援 logging callback。  
+- `Shared/FileNode.razor`：遞迴 UI（顯示檔案、標籤 badge、選取、展開）。  
+- `Pages/Home.razor`：工具列、命令管理（Undo/Redo）、呼叫 Visitor 與 XML 匯出、顯示 Console。  
+- `Models/FileSystemXmlSerializer.cs`：自訂 XML 序列化（標籤正規化、保留中文）。
 
-1. **觸發操作**：使用者在 `Home.razor` 點擊功能按鈕（計算/搜尋/匯出）。
-2. **初始化 Visitor**：`Home.razor` 建立對應的 Visitor 實例，並注入 **Logging Callback** 以接收過程訊息。
-3. **執行遍歷**：針對 `rootItems` 呼叫 `Accept(visitor)`。Visitor 開始遞迴遍歷模型樹，執行邏輯並即時回傳執行日誌。
-4. **結果呈現**：
-* 計算/搜尋/匯出結果直接反映於 UI。
+---
 
+## UI 操作說明（按鈕對應）
+- Undo / Redo：回復或重做最後一個命令（新增、刪除、標籤、排序）。  
+- Sort（名稱 / 大小 / 副檔名）：對當前選取之資料夾（或其 parent）排序。  
+- Copy / Paste：複製整個節點（含子節點），貼到選取資料夾或選取項目的父資料夾。  
+- Delete：刪除選取項目（支援 Undo）。  
+- Tag buttons：切換 Urgent / Work / Personal（三色）；可套多重標籤。
+
+---
+
+## Visitor / 造訪路徑
+- UI 顯示的遍歷日誌建議稱為「造訪路徑」或「遍歷紀錄」，已在 Console 中顯示。
