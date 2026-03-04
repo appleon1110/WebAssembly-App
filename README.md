@@ -39,8 +39,10 @@
 - Copy / Paste：複製整個節點（含子節點），貼到選取資料夾或選取項目的父資料夾。  
 - Delete：刪除選取項目（支援 Undo）。  
 - Tag buttons：切換 Urgent / Work / Personal（三色）；可套多重標籤。
-
+- 計算總大小
+- 搜尋
+- 匯出XML
 ---
 
 ## Visitor / 造訪路徑
-- UI 顯示的遍歷日誌建議稱為「造訪路徑」或「遍歷紀錄」，已在 Console 中顯示。
+- 在 Console 中顯示。
