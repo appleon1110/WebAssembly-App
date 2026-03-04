@@ -1,0 +1,85 @@
+﻿@using CloudFileManager.Models
+
+<ul class="list-unstyled ms-4 border-start ps-3">
+    @foreach (var item in Items)
+    {
+        <li class="my-2">
+            @if (item is Folder folder)
+            {
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-sm btn-link p-0 me-2" @onclick="() => Toggle(folder)" aria-expanded="@IsExpanded(folder)">
+                        @(IsExpanded(folder) ? "▾" : "▸")
+                    </button>
+                    <span class="fw-bold text-primary">📁 @folder.Name</span>
+                </div>
+
+                @if (IsExpanded(folder))
+                {
+                    <FileNode Items="folder.Children" />
+                }
+            }
+            else
+            {
+                @* 依照您要求的 HTML 結構進行修改 *@
+                <div class="d-flex align-items-center">
+                    @* 根據檔案類型變更圖示 *@
+                    <span class="me-2">
+                        @if (item is WordFile)
+                        {
+                            <span class="text-primary">📄</span>
+                        }
+                        else if (item is ImageFile)
+                        {
+
+                            <span class="text-info">🖼️</span>
+                        }
+                        else
+                        {
+
+                            <span class="text-secondary">📄</span>
+                        }
+                    </span>
+                    <div>
+                        <div class="fw-bold d-inline">@item.Name</div>
+
+                        <p class="small d-inline text-muted">
+                            (
+                            @item.SizeKB KB |
+                            @if (item is WordFile w)
+                            {
+                                <span>pages: @w.PageCount</span>
+                            }
+                            else if (item is ImageFile i)
+                            {
+                                <span>res: @i.Width x @i.Height</span>
+                            }
+                            else if (item is TextFile t)
+                            {
+                                <span>enc: @t.Encoding</span>
+                            }
+                            )
+                        </p>
+                        
+                    </div>
+                </div>
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter] public List<FileSystemItem> Items { get; set; } = new();
+
+    // 使用參考相等性 (HashSet) 追蹤哪些 Folder 被展開
+    private HashSet<FileSystemItem> _expanded = new();
+
+    private void Toggle(FileSystemItem folder)
+    {
+        if (!_expanded.Remove(folder))
+        {
+            _expanded.Add(folder);
+        }
+    }
+
+    private bool IsExpanded(FileSystemItem folder) => _expanded.Contains(folder);
+}

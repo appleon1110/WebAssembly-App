@@ -1,0 +1,27 @@
+﻿@page "/counter"
+@using CloudFileManager.Models  @* 確保這裡與你的資料夾名稱一致 *@
+@using WebAssembly_App.Shared
+
+<h1>檔案管理系統測試</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">目錄結構</div>
+    <div class="card-body">
+        @* 關鍵：你必須呼叫這個元件 *@
+        <FileNode Items="rootItems" />
+    </div>
+</div>
+
+@code {
+    private List<FileSystemItem> rootItems = new();
+
+    protected override void OnInitialized()
+    {
+        // 這裡要重複之前的初始化邏輯，rootItems 才會有資料
+        var root = new Folder { Name = "Root" };
+        var projectDocs = new Folder { Name = "Project_Docs" };
+        projectDocs.Children.Add(new WordFile { Name = "需求規格書.docx", SizeKB = 500, PageCount = 15 });
+        root.Children.Add(projectDocs);
+        rootItems.Add(root);
+    }
+}

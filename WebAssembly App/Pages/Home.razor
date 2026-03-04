@@ -1,0 +1,171 @@
+﻿@page "/"
+@using CloudFileManager.Models
+@using WebAssembly_App.Shared
+@using System.Net
+@using Microsoft.AspNetCore.Components
+
+<PageTitle>檔案管理系統</PageTitle>
+
+<div class="container py-4">
+    <h2 class="mb-4">☁️ 雲端檔案管理系統</h2>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">目錄結構</div>
+                <div class="card-body">
+                    <FileNode Items="rootItems" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-primary">
+                <div class="card-body">
+                    <h5>系統操作</h5>
+                    <button class="btn btn-outline-primary w-100 mb-2" @onclick="RunSizeCalc">⚡ 計算總大小</button>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" placeholder=".docx" @bind="searchExt" />
+                        <button class="btn btn-outline-secondary" @onclick="RunSearch">🔍 搜尋</button>
+                    </div>
+
+                    <div class="d-grid mb-2">
+                        <button class="btn btn-outline-success" @onclick="RunExportXml">📄 匯出 XML</button>
+                    </div>
+
+                    <hr />
+                    <div class="p-3 bg-light rounded" style="min-height: 150px; overflow:auto;">
+                        <pre>@(new MarkupString(consoleOutput))</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<FileSystemItem> rootItems = new();
+    private string consoleOutput = "執行結果將顯示於此...";
+    private string searchExt = ".docx";
+
+    protected override void OnInitialized()
+    {
+        var root = new Folder { Name = "根目錄_Root" };
+
+        // 專案文件
+        var projectDocs = new Folder { Name = "專案文件_Project_Docs" };
+        projectDocs.Children.Add(new WordFile { Name = "需求規格書.docx", PageCount = 35, SizeKB = 500 });
+        projectDocs.Children.Add(new WordFile { Name = "API介面定義.docx", PageCount = 12, SizeKB = 120 });
+        projectDocs.Children.Add(new ImageFile { Name = "系統架構圖.png", SizeKB = 2048, Width = 1920, Height = 1080 });
+
+        // 個人筆記
+        var personal = new Folder { Name = "個人筆記_Personal_Notes" };
+        personal.Children.Add(new TextFile { Name = "待辦清單.txt", SizeKB = 1, Encoding = "UTF-8" });
+
+        var archive = new Folder { Name = "Archive_2025" };
+        archive.Children.Add(new WordFile { Name = "會議記錄.docx", SizeKB = 200, PageCount = 5 });
+        personal.Children.Add(archive);
+
+        root.Children.Add(projectDocs);
+        root.Children.Add(personal);
+        root.Children.Add(new TextFile { Name = "README.txt", SizeKB = 0.5, Encoding = "ASCII" });
+
+        rootItems.Add(root);
+    }
+
+    private void RunSizeCalc()
+    {
+        var logs = new List<string>();
+        // log callback: (message, isMatch)
+        void LogHandler(string message, bool isMatch)
+        {
+            var encoded = WebUtility.HtmlEncode(message);
+            if (isMatch)
+            {
+                // 把 match 用 bootstrap 的 text-success 顯示綠色
+                logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
+            }
+            else
+            {
+                logs.Add($"<div>{encoded}</div>");
+            }
+        }
+
+        var calc = new SizeCalculator(LogHandler);
+        foreach (var item in rootItems) item.Accept(calc);
+
+        logs.Add($"<div>{WebUtility.HtmlEncode($"[計算完成] 系統總容量: {calc.TotalSize} KB")}</div>");
+        consoleOutput = string.Join("", logs);
+    }
+
+    private void RunSearch()
+    {
+        var logs = new List<string>();
+        void LogHandler(string message, bool isMatch)
+        {
+            var encoded = WebUtility.HtmlEncode(message);
+            if (isMatch)
+            {
+                logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
+            }
+            else
+            {
+                logs.Add($"<div>{encoded}</div>");
+            }
+        }
+
+        var searcher = new FileSearcher(searchExt, LogHandler);
+        foreach (var item in rootItems) item.Accept(searcher);
+
+        logs.Add($"<div>{WebUtility.HtmlEncode($"[搜尋結果: {searchExt}]")}</div>");
+        if (searcher.FoundPaths.Any())
+        {
+            foreach (var p in searcher.FoundPaths)
+            {
+                logs.Add($"<div>{WebUtility.HtmlEncode($"[找到] {p}")}</div>");
+            }
+            logs.Add($"<div>{WebUtility.HtmlEncode($"找到 {searcher.FoundPaths.Count} 項")}</div>");
+        }
+        else
+        {
+            logs.Add($"<div>{WebUtility.HtmlEncode("找不到符合的檔案")}</div>");
+        }
+
+        consoleOutput = string.Join("", logs);
+    }
+
+    private void RunExportXml()
+    {
+        try
+        {
+            consoleOutput = "";
+            var xml = FileSystemXmlSerializer.SerializeCustom(rootItems);
+            // HTML encode 並包在 <pre> 內以保留換行與縮排，避免瀏覽器解析成 HTML 標籤
+            var encodedXml = WebUtility.HtmlEncode("[XML 匯出]\n" + xml);
+            var htmlBlock = $"<div><pre>{encodedXml}</pre></div>";
+
+            // 如果 console 還是預設提示，直接用 xml；否則附加到現有 console
+            if (string.IsNullOrWhiteSpace(consoleOutput) || consoleOutput == "執行結果將顯示於此...")
+            {
+                consoleOutput = htmlBlock;
+            }
+            else
+            {
+                consoleOutput += htmlBlock;
+            }
+        }
+        catch (Exception ex)
+        {
+            var err = WebUtility.HtmlEncode($"[匯出失敗] {ex.Message}");
+            var htmlErr = $"<div>{err}</div>";
+            if (string.IsNullOrWhiteSpace(consoleOutput) || consoleOutput == "執行結果將顯示於此...")
+            {
+                consoleOutput = htmlErr;
+            }
+            else
+            {
+                consoleOutput += htmlErr;
+            }
+        }
+    }
+}
