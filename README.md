@@ -7,7 +7,7 @@
 ## 核心功能
 - 樹狀目錄呈現（遞迴元件：`Shared/FileNode.razor`）
 - 空間統計（`Models/Visitors.cs` → `SizeCalculator`）
-- 進階搜尋（`Models/Visitors.cs` → FileSearcher`，依副檔名）
+- 進階搜尋（`Models/Visitors.cs` → `FileSearcher`，依副檔名）
 - 自訂 XML 匯出（`Models/FileSystemXmlSerializer.cs`）
 - 執行日誌（造訪路徑 / traversal log，顯示於頁面右側 Console）
 
