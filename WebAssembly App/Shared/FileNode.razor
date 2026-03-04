@@ -10,56 +10,60 @@
                     <button class="btn btn-sm btn-link p-0 me-2" @onclick="() => Toggle(folder)" aria-expanded="@IsExpanded(folder)">
                         @(IsExpanded(folder) ? "▾" : "▸")
                     </button>
-                    <span class="fw-bold text-primary">📁 @folder.Name</span>
+                    <span class="fw-bold text-primary"
+                          @onclick="() => SelectItem(folder)"
+                          style="cursor:pointer;@(IsSelected(folder) ? "background:#e9f5ff;padding:2px 6px;border-radius:4px;" : "")">
+                        📁 @folder.Name
+                    </span>
+
+                    @if (folder.Tags?.Count > 0)
+                    {
+                        <div class="ms-2">
+                            @foreach (var t in folder.Tags)
+                            {
+                                <span class="@GetTagBadgeClass(t) me-1">@t</span>
+                            }
+                        </div>
+                    }
                 </div>
 
                 @if (IsExpanded(folder))
                 {
-                    <FileNode Items="folder.Children" />
+                    <FileNode Items="folder.Children" SelectedItem="SelectedItem" OnSelect="OnSelect" />
                 }
             }
             else
             {
-                @* 依照您要求的 HTML 結構進行修改 *@
                 <div class="d-flex align-items-center">
-                    @* 根據檔案類型變更圖示 *@
                     <span class="me-2">
-                        @if (item is WordFile)
-                        {
-                            <span class="text-primary">📄</span>
-                        }
-                        else if (item is ImageFile)
-                        {
-
-                            <span class="text-info">🖼️</span>
-                        }
-                        else
-                        {
-
-                            <span class="text-secondary">📄</span>
-                        }
+                        @if (item is WordFile) { <span class="text-primary">📄</span> }
+                        else if (item is ImageFile) { <span class="text-info">🖼️</span> }
+                        else { <span class="text-secondary">📄</span> }
                     </span>
-                    <div>
-                        <div class="fw-bold d-inline">@item.Name</div>
+                    <div style="min-width:0; width:100%;">
+                        <div class="d-flex align-items-center">
+                            <div class="fw-bold text-truncate" style="max-width:220px; cursor:pointer;@(IsSelected(item) ? "background:#e9f5ff;padding:2px 6px;border-radius:4px;" : "")"
+                                 @onclick="() => SelectItem(item)">
+                                @item.Name
+                            </div>
 
-                        <p class="small d-inline text-muted">
-                            (
-                            @item.SizeKB KB |
-                            @if (item is WordFile w)
-                            {
-                                <span>pages: @w.PageCount</span>
-                            }
-                            else if (item is ImageFile i)
-                            {
-                                <span>res: @i.Width x @i.Height</span>
-                            }
-                            else if (item is TextFile t)
-                            {
-                                <span>enc: @t.Encoding</span>
-                            }
-                            )
-                        </p>
-                        
+                            <div class="ms-2 small text-muted">
+                                (@item.SizeKB KB |
+                                @if (item is WordFile w) { <span>pages: @w.PageCount</span> }
+                                else if (item is ImageFile i) { <span>res: @i.Width x @i.Height</span> }
+                                else if (item is TextFile t) { <span>enc: @t.Encoding</span> })
+                            </div>
+                        </div>
+
+                        @if (item.Tags?.Count > 0)
+                        {
+                            <div class="mt-1">
+                                @foreach (var tag in item.Tags)
+                                {
+                                    <span class="@GetTagBadgeClass(tag) me-1">@tag</span>
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
             }
@@ -69,8 +73,9 @@
 
 @code {
     [Parameter] public List<FileSystemItem> Items { get; set; } = new();
+    [Parameter] public FileSystemItem? SelectedItem { get; set; }
+    [Parameter] public EventCallback<FileSystemItem?> OnSelect { get; set; }
 
-    // 使用參考相等性 (HashSet) 追蹤哪些 Folder 被展開
     private HashSet<FileSystemItem> _expanded = new();
 
     private void Toggle(FileSystemItem folder)
@@ -82,4 +87,26 @@
     }
 
     private bool IsExpanded(FileSystemItem folder) => _expanded.Contains(folder);
+
+    private void SelectItem(FileSystemItem? item)
+    {
+        if (item is null) return;
+        SelectedItem = item;
+        OnSelect.InvokeAsync(item);
+    }
+
+    private bool IsSelected(FileSystemItem item) => SelectedItem != null && ReferenceEquals(SelectedItem, item);
+
+    // Tag -> badge class 映射（Bootstrap 類別）
+    private string GetTagBadgeClass(string tag)
+    {
+        if (string.IsNullOrWhiteSpace(tag)) return "badge bg-secondary";
+        return tag.Trim().ToLower() switch
+        {
+            "urgent" => "badge bg-danger text-white",
+            "work" => "badge bg-primary text-white",
+            "personal" => "badge bg-success text-white",
+            _ => "badge bg-secondary"
+        };
+    }
 }

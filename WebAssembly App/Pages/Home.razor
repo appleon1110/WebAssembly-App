@@ -3,18 +3,52 @@
 @using WebAssembly_App.Shared
 @using System.Net
 @using Microsoft.AspNetCore.Components
+@using System.Linq
+@using System.IO
 
 <PageTitle>檔案管理系統</PageTitle>
 
 <div class="container py-4">
     <h2 class="mb-4">☁️ 雲端檔案管理系統</h2>
 
+    <div class="row mb-2">
+        <div class="col">
+            <div class="btn-toolbar mb-2" role="toolbar">
+                <div class="btn-group me-2" role="group">
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="Undo">↶ Undo</button>
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="Redo">↷ Redo</button>
+                </div>
+
+                <div class="btn-group me-2" role="group">
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Name, true)">名稱 ↑</button>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Name, false)">名稱 ↓</button>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Size, true)">大小 ↑</button>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Size, false)">大小 ↓</button>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Extension, true)">副檔名 ↑</button>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Extension, false)">副檔名 ↓</button>
+                </div>
+
+                <div class="btn-group me-2" role="group">
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="Copy">複製</button>
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="Paste">貼上</button>
+                    <button class="btn btn-sm btn-outline-danger" @onclick="DeleteSelected">刪除</button>
+                </div>
+
+                <div class="btn-group me-2" role="group">
+                    <button class="btn btn-sm btn-outline-warning" @onclick='() => ToggleTagOnSelected("Urgent")'>Urgent</button>
+                    <button class="btn btn-sm btn-outline-info"    @onclick='() => ToggleTagOnSelected("Work")'>Work</button>
+                    <button class="btn btn-sm btn-outline-success" @onclick='() => ToggleTagOnSelected("Personal")'>Personal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-7">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-dark text-white">目錄結構</div>
                 <div class="card-body">
-                    <FileNode Items="rootItems" />
+                    <FileNode Items="rootItems" SelectedItem="selectedItem" OnSelect="OnSelectItem" />
                 </div>
             </div>
         </div>
@@ -48,17 +82,21 @@
     private string consoleOutput = "執行結果將顯示於此...";
     private string searchExt = ".docx";
 
+    private FileSystemItem? selectedItem;
+    private FileSystemItem? clipboardItem;
+
+    private Stack<ICommand> _undo = new();
+    private Stack<ICommand> _redo = new();
+
     protected override void OnInitialized()
     {
         var root = new Folder { Name = "根目錄_Root" };
 
-        // 專案文件
         var projectDocs = new Folder { Name = "專案文件_Project_Docs" };
         projectDocs.Children.Add(new WordFile { Name = "需求規格書.docx", PageCount = 35, SizeKB = 500 });
         projectDocs.Children.Add(new WordFile { Name = "API介面定義.docx", PageCount = 12, SizeKB = 120 });
         projectDocs.Children.Add(new ImageFile { Name = "系統架構圖.png", SizeKB = 2048, Width = 1920, Height = 1080 });
 
-        // 個人筆記
         var personal = new Folder { Name = "個人筆記_Personal_Notes" };
         personal.Children.Add(new TextFile { Name = "待辦清單.txt", SizeKB = 1, Encoding = "UTF-8" });
 
@@ -73,25 +111,23 @@
         rootItems.Add(root);
     }
 
+    private void OnSelectItem(FileSystemItem? item)
+    {
+        selectedItem = item;
+        StateHasChanged();
+    }
+
     private void RunSizeCalc()
     {
         var logs = new List<string>();
-        // log callback: (message, isMatch)
         void LogHandler(string message, bool isMatch)
         {
             var encoded = WebUtility.HtmlEncode(message);
-            if (isMatch)
-            {
-                // 把 match 用 bootstrap 的 text-success 顯示綠色
-                logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
-            }
-            else
-            {
-                logs.Add($"<div>{encoded}</div>");
-            }
+            if (isMatch) logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
+            else logs.Add($"<div>{encoded}</div>");
         }
 
-        var calc = new SizeCalculator(LogHandler);
+        var calc = new SizeCalculator((m, b) => LogHandler(m, b));
         foreach (var item in rootItems) item.Accept(calc);
 
         logs.Add($"<div>{WebUtility.HtmlEncode($"[計算完成] 系統總容量: {calc.TotalSize} KB")}</div>");
@@ -104,26 +140,17 @@
         void LogHandler(string message, bool isMatch)
         {
             var encoded = WebUtility.HtmlEncode(message);
-            if (isMatch)
-            {
-                logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
-            }
-            else
-            {
-                logs.Add($"<div>{encoded}</div>");
-            }
+            if (isMatch) logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
+            else logs.Add($"<div>{encoded}</div>");
         }
 
-        var searcher = new FileSearcher(searchExt, LogHandler);
+        var searcher = new FileSearcher(searchExt, (m, b) => LogHandler(m, b));
         foreach (var item in rootItems) item.Accept(searcher);
 
         logs.Add($"<div>{WebUtility.HtmlEncode($"[搜尋結果: {searchExt}]")}</div>");
         if (searcher.FoundPaths.Any())
         {
-            foreach (var p in searcher.FoundPaths)
-            {
-                logs.Add($"<div>{WebUtility.HtmlEncode($"[找到] {p}")}</div>");
-            }
+            foreach (var p in searcher.FoundPaths) logs.Add($"<div>{WebUtility.HtmlEncode($"[找到] {p}")}</div>");
             logs.Add($"<div>{WebUtility.HtmlEncode($"找到 {searcher.FoundPaths.Count} 項")}</div>");
         }
         else
@@ -140,32 +167,232 @@
         {
             consoleOutput = "";
             var xml = FileSystemXmlSerializer.SerializeCustom(rootItems);
-            // HTML encode 並包在 <pre> 內以保留換行與縮排，避免瀏覽器解析成 HTML 標籤
             var encodedXml = WebUtility.HtmlEncode("[XML 匯出]\n" + xml);
             var htmlBlock = $"<div><pre>{encodedXml}</pre></div>";
-
-            // 如果 console 還是預設提示，直接用 xml；否則附加到現有 console
-            if (string.IsNullOrWhiteSpace(consoleOutput) || consoleOutput == "執行結果將顯示於此...")
-            {
-                consoleOutput = htmlBlock;
-            }
-            else
-            {
-                consoleOutput += htmlBlock;
-            }
+            if (string.IsNullOrWhiteSpace(consoleOutput) || consoleOutput == "執行結果將顯示於此...") consoleOutput = htmlBlock;
+            else consoleOutput += htmlBlock;
         }
         catch (Exception ex)
         {
             var err = WebUtility.HtmlEncode($"[匯出失敗] {ex.Message}");
             var htmlErr = $"<div>{err}</div>";
-            if (string.IsNullOrWhiteSpace(consoleOutput) || consoleOutput == "執行結果將顯示於此...")
+            if (string.IsNullOrWhiteSpace(consoleOutput) || consoleOutput == "執行結果將顯示於此...") consoleOutput = htmlErr;
+            else consoleOutput += htmlErr;
+        }
+    }
+
+    private void Copy()
+    {
+        if (selectedItem == null) return;
+        clipboardItem = CloneItem(selectedItem);
+    }
+
+    private void Paste()
+    {
+        if (clipboardItem == null) return;
+        var targetFolder = selectedItem as Folder ?? FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
+        if (targetFolder == null) return;
+
+        var clone = CloneItem(clipboardItem);
+        var cmd = new AddCommand(targetFolder, clone);
+        ExecuteCommand(cmd);
+    }
+
+    private void DeleteSelected()
+    {
+        if (selectedItem == null) return;
+        var parent = FindParentFolder(selectedItem);
+        if (parent == null) return;
+        var index = parent.Children.IndexOf(selectedItem);
+        if (index < 0) return;
+        var cmd = new DeleteCommand(parent, selectedItem, index);
+        ExecuteCommand(cmd);
+        selectedItem = null;
+    }
+
+    private void ToggleTagOnSelected(string tag)
+    {
+        if (selectedItem == null) return;
+        var cmd = new TagToggleCommand(selectedItem, tag);
+        ExecuteCommand(cmd);
+    }
+
+    enum SortKey { Name, Size, Extension }
+
+    private void SortSelected(SortKey key, bool ascending)
+    {
+        Folder? folder = selectedItem as Folder;
+        if (folder == null) folder = FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
+        if (folder == null) return;
+
+        var oldOrder = folder.Children.ToList();
+        var cmd = new SortCommand(folder, key, ascending, oldOrder);
+        ExecuteCommand(cmd);
+    }
+
+    private void ExecuteCommand(ICommand cmd)
+    {
+        cmd.Execute();
+        _undo.Push(cmd);
+        _redo.Clear();
+        StateHasChanged();
+    }
+
+    private void Undo()
+    {
+        if (!_undo.Any()) return;
+        var cmd = _undo.Pop();
+        cmd.Undo();
+        _redo.Push(cmd);
+        StateHasChanged();
+    }
+
+    private void Redo()
+    {
+        if (!_redo.Any()) return;
+        var cmd = _redo.Pop();
+        cmd.Execute();
+        _undo.Push(cmd);
+        StateHasChanged();
+    }
+
+    private Folder? FindParentFolder(FileSystemItem? target)
+    {
+        if (target == null) return null;
+        foreach (var root in rootItems)
+        {
+            var found = FindParentRecursive(root as Folder, target);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private Folder? FindParentRecursive(Folder? current, FileSystemItem target)
+    {
+        if (current == null) return null;
+        for (int i = 0; i < current.Children.Count; i++)
+        {
+            if (ReferenceEquals(current.Children[i], target)) return current;
+            if (current.Children[i] is Folder f)
             {
-                consoleOutput = htmlErr;
+                var inner = FindParentRecursive(f, target);
+                if (inner != null) return inner;
+            }
+        }
+        return null;
+    }
+
+    private FileSystemItem CloneItem(FileSystemItem src)
+    {
+        if (src is Folder f)
+        {
+            var nf = new Folder { Name = f.Name, SizeKB = f.SizeKB, CreatedDate = f.CreatedDate };
+            nf.Tags = new List<string>(f.Tags ?? new());
+            foreach (var c in f.Children) nf.Children.Add(CloneItem(c));
+            return nf;
+        }
+        else if (src is WordFile w)
+        {
+            return new WordFile { Name = w.Name, SizeKB = w.SizeKB, CreatedDate = w.CreatedDate, PageCount = w.PageCount, Tags = new List<string>(w.Tags ?? new()) };
+        }
+        else if (src is ImageFile i)
+        {
+            return new ImageFile { Name = i.Name, SizeKB = i.SizeKB, CreatedDate = i.CreatedDate, Width = i.Width, Height = i.Height, Tags = new List<string>(i.Tags ?? new()) };
+        }
+        else if (src is TextFile t)
+        {
+            return new TextFile { Name = t.Name, SizeKB = t.SizeKB, CreatedDate = t.CreatedDate, Encoding = t.Encoding, Tags = new List<string>(t.Tags ?? new()) };
+        }
+        else
+        {
+            return new TextFile { Name = src.Name, SizeKB = src.SizeKB, CreatedDate = src.CreatedDate, Tags = new List<string>(src.Tags ?? new()) };
+        }
+    }
+
+    private interface ICommand
+    {
+        void Execute();
+        void Undo();
+    }
+
+    private class AddCommand : ICommand
+    {
+        private Folder _parent;
+        private FileSystemItem _item;
+        public AddCommand(Folder parent, FileSystemItem item) { _parent = parent; _item = item; }
+        public void Execute() { _parent.Children.Add(_item); }
+        public void Undo() { _parent.Children.Remove(_item); }
+    }
+
+    private class DeleteCommand : ICommand
+    {
+        private Folder _parent;
+        private FileSystemItem _item;
+        private int _index;
+        public DeleteCommand(Folder parent, FileSystemItem item, int index) { _parent = parent; _item = item; _index = index; }
+        public void Execute() { if (_index <= _parent.Children.Count - 1) _parent.Children.RemoveAt(_index); else _parent.Children.Remove(_item); }
+        public void Undo() { if (_index <= _parent.Children.Count) _parent.Children.Insert(_index, _item); else _parent.Children.Add(_item); }
+    }
+
+    private class TagToggleCommand : ICommand
+    {
+        private FileSystemItem _item;
+        private string _tag;
+        private bool _wasPresent;
+        public TagToggleCommand(FileSystemItem item, string tag) { _item = item; _tag = tag; _wasPresent = item.Tags?.Contains(tag) == true; }
+        public void Execute()
+        {
+            if (_item.Tags == null) _item.Tags = new List<string>();
+            if (_wasPresent) _item.Tags.Remove(_tag);
+            else if (!_item.Tags.Contains(_tag)) _item.Tags.Add(_tag);
+        }
+        public void Undo()
+        {
+            if (_item.Tags == null) _item.Tags = new List<string>();
+            if (_wasPresent)
+            {
+                if (!_item.Tags.Contains(_tag)) _item.Tags.Add(_tag);
             }
             else
             {
-                consoleOutput += htmlErr;
+                _item.Tags.Remove(_tag);
             }
+        }
+    }
+
+    private class SortCommand : ICommand
+    {
+        private Folder _folder;
+        private List<FileSystemItem> _oldOrder;
+        private SortKey _key;
+        private bool _asc;
+
+        public SortCommand(Folder folder, SortKey key, bool asc, List<FileSystemItem> oldOrder)
+        {
+            _folder = folder; _key = key; _asc = asc; _oldOrder = new List<FileSystemItem>(oldOrder);
+        }
+
+        public void Execute()
+        {
+            IEnumerable<FileSystemItem> sorted = _folder.Children;
+            switch (_key)
+            {
+                case SortKey.Name:
+                    sorted = _asc ? _folder.Children.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase) : _folder.Children.OrderByDescending(c => c.Name, StringComparer.OrdinalIgnoreCase);
+                    break;
+                case SortKey.Size:
+                    sorted = _asc ? _folder.Children.OrderBy(c => c.SizeKB) : _folder.Children.OrderByDescending(c => c.SizeKB);
+                    break;
+                case SortKey.Extension:
+                    sorted = _asc ? _folder.Children.OrderBy(c => Path.GetExtension(c.Name)) : _folder.Children.OrderByDescending(c => Path.GetExtension(c.Name));
+                    break;
+            }
+            _folder.Children = sorted.ToList();
+        }
+
+        public void Undo()
+        {
+            _folder.Children = new List<FileSystemItem>(_oldOrder);
         }
     }
 }

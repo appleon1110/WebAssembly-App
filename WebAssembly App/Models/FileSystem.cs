@@ -30,6 +30,11 @@ namespace CloudFileManager.Models
         [XmlElement("CreatedDate")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
+        // Tags 屬性（支援多重標籤）
+        [XmlArray("Tags")]
+        [XmlArrayItem("Tag")]
+        public List<string> Tags { get; set; } = new();
+
         public abstract void Accept(IFileSystemVisitor visitor);
     }
 
