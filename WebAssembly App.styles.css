@@ -160,3 +160,193 @@ main[b-burbixt2t8] {
         overflow-y: auto;
     }
 }
+/* /Pages/Home.razor.rz.scp.css */
+/* pill toolbar (scoped to Home.razor) */
+.toolbar[b-956viydfrw] { display:flex; align-items:center; gap:10px; }
+.pill-btn[b-956viydfrw] {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:14px;
+  border:1px solid #e7eefc;
+  background:#fff;
+  color:#333;
+  font-size:13px;
+  cursor:pointer;
+  transition:all .12s ease-in-out;
+  box-shadow:none;
+}
+.pill-btn .pill-icon[b-956viydfrw] { width:16px; height:16px; display:inline-block; flex:0 0 16px; }
+.pill-btn:hover[b-956viydfrw] { background:#f3f9ff; transform:translateY(-1px); box-shadow:0 6px 18px rgba(25,118,255,0.06);}
+.pill-btn[disabled][b-956viydfrw] { opacity:.45; pointer-events:none; background:#fafafa; border-color:#f0f0f0; transform:none; box-shadow:none; }
+
+.pill-btn.active[b-956viydfrw] { background:#1976ff; color:#fff; border-color:rgba(0,0,0,0.04); box-shadow:0 6px 18px rgba(25,118,255,0.12); }
+.pill-btn .badge-count[b-956viydfrw]{
+  margin-left:6px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:18px;
+  height:18px;
+  padding:0 5px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:600;
+  color:#fff;
+}
+
+.badge-urgent[b-956viydfrw] { background:#ff4d4f; }
+.badge-work[b-956viydfrw] { background:#0d6efd; }
+.badge-personal[b-956viydfrw] { background:#28a745; }
+
+.toolbar-sep[b-956viydfrw] { display:none; } /* 舊版已還原為 btn-toolbar，隱藏自訂分隔 */
+.btn-toolbar .btn[b-956viydfrw] { display:inline-flex; align-items:center; gap:6px; }
+.btn-toolbar .btn svg[b-956viydfrw] { vertical-align:middle; }
+.btn-toolbar .badge[b-956viydfrw] { font-weight:600; }
+
+/* Home 專屬：工具列外框與群組分隔（改良版） */
+.toolbar-box[b-956viydfrw] {
+  border: 1px solid #e6f3ff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.02);
+}
+
+/* 使用 flex 讓 btn-group 緊鄰，並使用偽元素繪製直線分隔 */
+.toolbar-box .btn-toolbar[b-956viydfrw] {
+  gap: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.toolbar-box .btn-group[b-956viydfrw] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 每個 btn-group 之後（相鄰的下一個）顯示垂直分隔線
+   會在群組間產生類似 "|" 的視覺 */
+.toolbar-box .btn-group + .btn-group[b-956viydfrw]::before {
+  content: "";
+  position: absolute;
+  left: -10px; /* 線靠近左側群組邊緣 */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 28px;
+  background: #e6e6e6;
+  border-radius: 1px;
+}
+
+/* 避免分隔線與按鈕太貼，補一些間距 */
+.toolbar-box .btn-group + .btn-group[b-956viydfrw] {
+  padding-left: 12px;
+  margin-left: 6px;
+}
+
+/* 如果某群組使用 ms-auto（右側 tags），分隔線仍會正確顯示 */
+.toolbar-box .btn-group.ms-auto + .btn-group[b-956viydfrw]::before { /* no-op for safety */ }
+
+/* 小調整：按鈕內 SVG 與文字對齊 */
+.toolbar-box .btn svg[b-956viydfrw] { vertical-align: middle; }
+
+/* 小螢幕時把分隔線隱藏以節省空間 */
+@media (max-width: 576px) {
+  .toolbar-box[b-956viydfrw] { padding: 6px; }
+  .toolbar-box .btn-group + .btn-group[b-956viydfrw]::before { display: none; }
+}
+
+/* 調整按鈕內 icon 大小與對齊 */
+.btn-toolbar .btn[b-956viydfrw] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* icon 與文字間距 */
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* 強制 svg 尺寸、取消額外空白並垂直置中 */
+.btn-toolbar .btn svg[b-956viydfrw], .btn-toolbar .btn > svg[b-956viydfrw] {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  vertical-align: middle;
+  margin-right: 6px; /* icon 與文字間距 */
+}
+
+/* 移除 .btn-group 內部按鈕的分界線（讓按鈕看起來是一塊） */
+.toolbar-box .btn-group .btn + .btn[b-956viydfrw] {
+  margin-left: -1px;
+  border-left: 0 !important;
+  box-shadow: none !important;
+}
+.toolbar-box .btn-group .btn:first-child[b-956viydfrw] {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.toolbar-box .btn-group .btn:last-child[b-956viydfrw] {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* 小圖示：圓 + 短線（顯示於按鈕左側） */
+.list-item-icon[b-956viydfrw] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin-right: 6px;
+  vertical-align: middle;
+  flex: 0 0 auto;
+}
+
+/* 圓形 */
+.list-item-icon[b-956viydfrw]::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border: 2px solid #5a6b80; /* 圓框顏色，可改 */
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+/* 短線 */
+.list-item-icon[b-956viydfrw]::after {
+  content: "";
+  width: 10px;      /* 線長，可微調 */
+  height: 2px;
+  background-color: #5a6b80; /* 線條顏色，同色系 */
+  border-radius: 1px;
+  display: inline-block;
+}
+
+/* 小螢幕微調：隱藏短線以節省空間（可選） */
+@media (max-width: 480px) {
+  .list-item-icon[b-956viydfrw]::after { display: none; }
+}
+
+/* toolbar divider 顏色調淡，使視覺不突兀 */
+.toolbar-divider[b-956viydfrw] {
+  width: 1px;
+  height: 28px;
+  background: #e9ecef;
+  margin: 0 12px;
+}
+
+/* 新增：排序箭頭樣式 */
+.sort-arrow[b-956viydfrw] {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1;
+  margin-right: 6px;
+  color: currentColor;
+  vertical-align: middle;
+}
