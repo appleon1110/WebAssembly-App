@@ -13,33 +13,82 @@
 
     <div class="row mb-2">
         <div class="col">
-            <div class="btn-toolbar mb-2" role="toolbar">
-                <div class="btn-group me-2" role="group">
-                    <button class="btn btn-sm btn-outline-secondary" @onclick="Undo">↶ Undo</button>
-                    <button class="btn btn-sm btn-outline-secondary" @onclick="Redo">↷ Redo</button>
-                </div>
+            <!-- 包在方框內的工具列 -->
+            <div class="toolbar-box mb-2">
+                <div class="btn-toolbar align-items-center" role="toolbar" aria-label="toolbar">
 
-                <div class="btn-group me-2" role="group">
-                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Name, true)">名稱 ↑</button>
-                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Name, false)">名稱 ↓</button>
-                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Size, true)">大小 ↑</button>
-                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Size, false)">大小 ↓</button>
-                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Extension, true)">副檔名 ↑</button>
-                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SortSelected(SortKey.Extension, false)">副檔名 ↓</button>
-                </div>
+                    <div class="btn-group" role="group" aria-label="undo-redo">
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="Undo" disabled="@(!_undo.Any())" title="撤銷">
+                            ↶ 撤銷
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="Redo" disabled="@(!_redo.Any())" title="重做">
+                             ↷ 重做
+                        </button>
+                    </div>
 
-                <div class="btn-group me-2" role="group">
-                    <button class="btn btn-sm btn-outline-secondary" @onclick="Copy">複製</button>
-                    <button class="btn btn-sm btn-outline-secondary" @onclick="Paste">貼上</button>
-                    <button class="btn btn-sm btn-outline-danger" @onclick="DeleteSelected">刪除</button>
-                </div>
+                    <div class="toolbar-divider" aria-hidden="true"></div>
+                    📃
+                    <div class="btn-group" role="group" aria-label="clipboard">
+                        <button class="btn btn-sm btn-outline-primary" @onclick="Copy" title="複製">
+                            @((MarkupString)IconLibrary.Copy) 複製
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="Paste" title="貼上" disabled="@(clipboardItem == null)">
+                            @((MarkupString)IconLibrary.Paste) 貼上
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="DeleteSelected" title="刪除" disabled="@(selectedItem == null)">
+                            @((MarkupString)IconLibrary.Trash) 刪除
+                        </button>
+                    </div>
 
-                <div class="btn-group me-2" role="group">
-                    <button class="btn btn-sm btn-outline-danger" @onclick='() => ToggleTagOnSelected("Urgent")'>Urgent</button>
-                    <button class="btn btn-sm btn-outline-info"    @onclick='() => ToggleTagOnSelected("Work")'>Work</button>
-                    <button class="btn btn-sm btn-outline-success" @onclick='() => ToggleTagOnSelected("Personal")'>Personal</button>
+                    <div class="toolbar-divider" aria-hidden="true"></div>
+
+                    <div class="btn-group" role="group" aria-label="sort">
+                        <button class="btn btn-sm @(IsActiveSort(SortKey.Name) ? "btn-primary text-white" : "btn-outline-secondary")"
+                                @onclick="() => SortSelected(SortKey.Name, !IsActiveSort(SortKey.Name) ? true : !activeSortAsc)">
+                            @if (IsActiveSort(SortKey.Name))
+                            {
+                                <span class="sort-arrow">@(activeSortAsc ? "▲" : "▼")</span>
+                            }
+                            名稱
+                        </button>
+                        <button class="btn btn-sm @(IsActiveSort(SortKey.Size) ? "btn-primary text-white" : "btn-outline-secondary")"
+                                @onclick="() => SortSelected(SortKey.Size, !IsActiveSort(SortKey.Size) ? true : !activeSortAsc)">
+                            @if (IsActiveSort(SortKey.Size))
+                            {
+                                <span class="sort-arrow">@(activeSortAsc ? "▲" : "▼")</span>
+                            }
+                            大小
+                        </button>
+                        <button class="btn btn-sm @(IsActiveSort(SortKey.Extension) ? "btn-primary text-white" : "btn-outline-secondary")"
+                                @onclick="() => SortSelected(SortKey.Extension, !IsActiveSort(SortKey.Extension) ? true : !activeSortAsc)">
+                            @if (IsActiveSort(SortKey.Extension))
+                            {
+                                <span class="sort-arrow">@(activeSortAsc ? "▲" : "▼")</span>
+                            }
+                            類型
+                        </button>
+                    </div>
+
+                    
+                    <div class="btn-group ms-2" role="group" aria-label="tags">
+                        🏷️
+                        <button class="btn btn-sm btn-outline-danger" @onclick='() => ToggleTagOnSelected("Urgent")' disabled="@(selectedItem == null)">
+                            @((MarkupString)IconLibrary.Label) Urgent
+                            <span class="badge bg-danger ms-2">@CountTag("Urgent")</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" @onclick='() => ToggleTagOnSelected("Work")' disabled="@(selectedItem == null)">
+                            @((MarkupString)IconLibrary.Label) Work
+                            <span class="badge bg-primary ms-2">@CountTag("Work")</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" @onclick='() => ToggleTagOnSelected("Personal")' disabled="@(selectedItem == null)">
+                            @((MarkupString)IconLibrary.Label) Personal
+                            <span class="badge bg-success ms-2">@CountTag("Personal")</span>
+                        </button>
+                    </div>
+
                 </div>
             </div>
+            <!-- end toolbar-box -->
         </div>
     </div>
 
@@ -60,7 +109,7 @@
                     <button class="btn btn-outline-primary w-100 mb-2" @onclick="RunSizeCalc">⚡ 計算總大小</button>
                     <div class="input-group mb-2">
                         <input type="text" class="form-control" placeholder=".docx" @bind="searchExt" />
-                        <button class="btn btn-outline-secondary" @onclick="RunSearch">🔍 搜尋</button>
+                        <button class="btn btn-outline-secondary" @onclick="RunSearch">🔍 副檔名搜尋</button>
                     </div>
 
                     <div class="d-grid mb-2">
@@ -87,6 +136,10 @@
 
     private Stack<ICommand> _undo = new();
     private Stack<ICommand> _redo = new();
+
+    // 用於 UI 標示目前排序鍵與方向
+    private SortKey? activeSortKey = null;
+    private bool activeSortAsc = true;
 
     protected override void OnInitialized()
     {
@@ -142,6 +195,14 @@
             var encoded = WebUtility.HtmlEncode(message);
             if (isMatch) logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
             else logs.Add($"<div>{encoded}</div>");
+        }
+
+        // 驗證輸入是否為有效的副檔名格式（必須以 . 開頭）
+        if (string.IsNullOrWhiteSpace(searchExt) || !searchExt.StartsWith("."))
+        {
+            logs.Add($"<div class=\"text-danger\">{WebUtility.HtmlEncode("❌ 請輸入有效的副檔名格式（例如：.docx）")}</div>");
+            consoleOutput = string.Join("", logs);
+            return;
         }
 
         var searcher = new FileSearcher(searchExt, (m, b) => LogHandler(m, b));
@@ -219,15 +280,41 @@
 
     enum SortKey { Name, Size, Extension }
 
+    private bool IsActiveSort(SortKey key) => activeSortKey.HasValue && activeSortKey.Value == key;
+
     private void SortSelected(SortKey key, bool ascending)
     {
         Folder? folder = selectedItem as Folder;
         if (folder == null) folder = FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
         if (folder == null) return;
 
+        // 更新 UI 狀態
+        activeSortKey = key;
+        activeSortAsc = ascending;
+
         var oldOrder = folder.Children.ToList();
         var cmd = new SortCommand(folder, key, ascending, oldOrder);
         ExecuteCommand(cmd);
+    }
+
+    // 計算系統中標籤數量（給工具列上的徽章）
+    private int CountTag(string tag)
+    {
+        int count = 0;
+        foreach (var root in rootItems)
+        {
+            CountTagRecursive(root, tag, ref count);
+        }
+        return count;
+    }
+
+    private void CountTagRecursive(FileSystemItem item, string tag, ref int count)
+    {
+        if (item.Tags?.Contains(tag) == true) count++;
+        if (item is Folder f)
+        {
+            foreach (var c in f.Children) CountTagRecursive(c, tag, ref count);
+        }
     }
 
     private void ExecuteCommand(ICommand cmd)
