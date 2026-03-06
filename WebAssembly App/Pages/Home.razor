@@ -98,7 +98,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-12 col-ratio-6">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-dark text-white">目錄結構</div>
                 <div class="card-body">
@@ -107,28 +107,54 @@
             </div>
         </div>
 
-        <div class="col-md-5">
-            <div class="card shadow-sm border-primary">
+        <div class="col-12 col-ratio-7">
+            <div class="card shadow-sm border-primary h-auto">
                 <div class="card-body">
                     <h5>系統操作</h5>
-                    <button class="btn btn-outline-primary w-100 mb-2" @onclick="RunSizeCalc">⚡ 計算總大小</button>
+                    @* 按鈕改成執行中禁用，避免重複觸發 *@
+                    <button class="btn btn-outline-primary w-100 mb-2" @onclick="RunSizeCalc" disabled="@_isTraversing">⚡ 計算總大小</button>
                     <div class="input-group mb-2">
                         <input type="text" class="form-control" placeholder=".docx" @bind="searchExt" />
-                        <button class="btn btn-outline-secondary" @onclick="RunSearch">🔍 副檔名搜尋</button>
+                        <button class="btn btn-outline-secondary" @onclick="RunSearch" disabled="@_isTraversing">🔍 副檔名搜尋</button>
                     </div>
 
                     <div class="d-grid mb-2">
-                        <button class="btn btn-outline-success" @onclick="RunExportXml">📄 匯出 XML</button>
+                        <button class="btn btn-outline-success" @onclick="RunExportXml" disabled="@_isTraversing">📄 匯出 XML</button>
                     </div>
 
-                    <hr />
-                    <div class="p-3 bg-light rounded" style="min-height: 150px; overflow:auto;">
-                        <pre>@(new MarkupString(consoleOutput))</pre>
+                    @* 小型監控視窗：放在 Console 前面 *@
+                    <div class="p-2 bg-light rounded border mb-2" style="font-size: 0.9rem;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div class="fw-semibold">📡 監控 (Observer)</div>
+                            @if (_isTraversing)
+                            {
+                                <span class="badge bg-primary">LIVE</span>
+                            }
+                        </div>
+
+                        <div class="small text-muted">目前節點</div>
+                        <div class="fw-semibold text-primary text-truncate mb-1">@_currentNode</div>
+
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>探訪進度</span>
+                            <span>@_progressPercent%</span>
+                        </div>
+
+                        <div class="progress" style="height: 6px;" role="progressbar" aria-valuenow="@_progressPercent" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width:@($"{_progressPercent}%")"></div>
+                        </div>
+
+                        <div class="text-end small text-muted mt-1">@_visitedNodes/@_totalNodes Nodes</div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded console-box">
+                        <div class="console-output">@((MarkupString)consoleOutput)</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 @code {
@@ -141,6 +167,16 @@
 
     private Stack<ICommand> _undo = new();
     private Stack<ICommand> _redo = new();
+
+    // 新增：逐筆輸出控制
+    private bool _isTraversing = false;
+    private const int TraverseLogDelayMs = 120;
+
+    // 監控用欄位
+    private string _currentNode = "-";
+    private int _visitedNodes = 0;
+    private int _totalNodes = 0;
+    private int _progressPercent => _totalNodes == 0 ? 0 : (int)Math.Round((double)_visitedNodes * 100 / _totalNodes);
 
     // 取得目前應操作的目錄
     private Folder? GetActiveFolder()
@@ -189,56 +225,110 @@
         StateHasChanged();
     }
 
-    private void RunSizeCalc()
+    private async Task RunSizeCalc()
     {
-        var logs = new List<string>();
+        var entries = new List<(string Message, bool IsMatch)>();
+
         void LogHandler(string message, bool isMatch)
         {
-            var encoded = WebUtility.HtmlEncode(message);
-            if (isMatch) logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
-            else logs.Add($"<div>{encoded}</div>");
+            entries.Add((message, isMatch));
         }
 
-        var calc = new SizeCalculator((m, b) => LogHandler(m, b));
-        foreach (var item in rootItems) item.Accept(calc);
+        _isTraversing = true;
+        consoleOutput = "";
+        _currentNode = "-";
+        _visitedNodes = 0;
+        _totalNodes = 0;
+        await InvokeAsync(StateHasChanged);
 
-        logs.Add($"<div>{WebUtility.HtmlEncode($"[計算完成] 系統總容量: {calc.TotalSize} KB")}</div>");
-        consoleOutput = string.Join("", logs);
+        try
+        {
+            var calc = new SizeCalculator((m, b) => LogHandler(m, b));
+            foreach (var item in rootItems) item.Accept(calc);
+
+            entries.Add(($"[計算完成] 系統總容量: {calc.TotalSize} KB", false));
+            PrepareObserver(entries);
+
+            await ReplayLogsAsync(entries);
+        }
+        finally
+        {
+            _isTraversing = false;
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
-    private void RunSearch()
+    private async Task RunSearch()
     {
-        var logs = new List<string>();
+        var entries = new List<(string Message, bool IsMatch)>();
+
         void LogHandler(string message, bool isMatch)
         {
-            var encoded = WebUtility.HtmlEncode(message);
-            if (isMatch) logs.Add($"<div><span class=\"text-success\">{encoded}</span></div>");
-            else logs.Add($"<div>{encoded}</div>");
+            entries.Add((message, isMatch));
         }
 
-        // 驗證輸入是否為有效的副檔名格式（必須以 . 開頭）
         if (string.IsNullOrWhiteSpace(searchExt) || !searchExt.StartsWith("."))
         {
-            logs.Add($"<div class=\"text-danger\">{WebUtility.HtmlEncode("❌ 請輸入有效的副檔名格式（例如：.docx）")}</div>");
-            consoleOutput = string.Join("", logs);
+            consoleOutput = BuildLogHtml("❌ 請輸入有效的副檔名格式（例如：.docx）", false, "text-danger");
+            await InvokeAsync(StateHasChanged);
             return;
         }
 
-        var searcher = new FileSearcher(searchExt, (m, b) => LogHandler(m, b));
-        foreach (var item in rootItems) item.Accept(searcher);
+        _isTraversing = true;
+        consoleOutput = "";
+        _currentNode = "-";
+        _visitedNodes = 0;
+        _totalNodes = 0;
+        await InvokeAsync(StateHasChanged);
 
-        logs.Add($"<div>{WebUtility.HtmlEncode($"[搜尋結果: {searchExt}]")}</div>");
-        if (searcher.FoundPaths.Any())
+        try
         {
-            foreach (var p in searcher.FoundPaths) logs.Add($"<div>{WebUtility.HtmlEncode($"[找到] {p}")}</div>");
-            logs.Add($"<div>{WebUtility.HtmlEncode($"找到 {searcher.FoundPaths.Count} 項")}</div>");
-        }
-        else
-        {
-            logs.Add($"<div>{WebUtility.HtmlEncode("找不到符合的檔案")}</div>");
-        }
+            var searcher = new FileSearcher(searchExt, (m, b) => LogHandler(m, b));
+            foreach (var item in rootItems) item.Accept(searcher);
 
-        consoleOutput = string.Join("", logs);
+            entries.Add(($"[搜尋結果: {searchExt}]", false));
+            if (searcher.FoundPaths.Any())
+            {
+                foreach (var p in searcher.FoundPaths) entries.Add(($"[找到] {p}", false));
+                entries.Add(($"找到 {searcher.FoundPaths.Count} 項", false));
+            }
+            else
+            {
+                entries.Add(("找不到符合的檔案", false));
+            }
+
+            PrepareObserver(entries);
+            await ReplayLogsAsync(entries);
+        }
+        finally
+        {
+            _isTraversing = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task ReplayLogsAsync(List<(string Message, bool IsMatch)> entries)
+    {
+        consoleOutput = "";
+        foreach (var (message, isMatch) in entries)
+        {
+            UpdateObserverFromMessage(message);
+
+            consoleOutput += BuildLogHtml(message, isMatch);
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(TraverseLogDelayMs);
+        }
+    }
+
+    private static string BuildLogHtml(string message, bool isMatch, string? extraCssClass = null)
+    {
+        var encoded = WebUtility.HtmlEncode(message);
+        var classAttr = string.IsNullOrWhiteSpace(extraCssClass) ? "" : $" class=\"{extraCssClass}\"";
+
+        if (isMatch)
+            return $"<div{classAttr}><span class=\"text-success\">{encoded}</span></div>";
+
+        return $"<div{classAttr}>{encoded}</div>";
     }
 
     private void RunExportXml()
@@ -327,9 +417,13 @@
     private void CountTagRecursive(FileSystemItem item, string tag, ref int count)
     {
         if (item.Tags?.Contains(tag) == true) count++;
+
         if (item is Folder f)
         {
-            foreach (var c in f.Children) CountTagRecursive(c, tag, ref count);
+            foreach (var c in f.Children)
+            {
+                CountTagRecursive(c, tag, ref count);
+            }
         }
     }
 
@@ -515,5 +609,29 @@
             _folder.CurrentSortKey = _oldSortKey;
             _folder.IsSortAscending = _oldSortAsc;
         }
+    }
+
+    private void PrepareObserver(List<(string Message, bool IsMatch)> entries)
+    {
+        _visitedNodes = 0;
+        _totalNodes = entries.Count(e => e.Message.StartsWith("Visiting:", StringComparison.Ordinal));
+        _currentNode = "-";
+    }
+
+    private void UpdateObserverFromMessage(string message)
+    {
+        if (!message.StartsWith("Visiting:", StringComparison.Ordinal)) return;
+
+        _visitedNodes++;
+        _currentNode = ExtractNodeName(message);
+    }
+
+    private static string ExtractNodeName(string visitingMessage)
+    {
+        var path = visitingMessage["Visiting:".Length..].Trim();
+        if (string.IsNullOrWhiteSpace(path)) return "-";
+
+        var parts = path.Split("->", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length == 0 ? path : parts[^1];
     }
 }

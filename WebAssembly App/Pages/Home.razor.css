@@ -42,7 +42,7 @@
 .btn-toolbar .btn svg { vertical-align:middle; }
 .btn-toolbar .badge { font-weight:600; }
 
-/* Home 專屬：工具列外框與群組分隔（改良版） */
+/* Home 專屬：工具列外框 */
 .toolbar-box {
   border: 1px solid #e6f3ff;
   border-radius: 8px;
@@ -51,7 +51,7 @@
   box-shadow: 0 1px 2px rgba(16,24,40,0.02);
 }
 
-/* 使用 flex 讓 btn-group 緊鄰，並使用偽元素繪製直線分隔 */
+/* 工具列排版 */
 .toolbar-box .btn-toolbar {
   gap: 8px;
   width: 100%;
@@ -66,12 +66,11 @@
   align-items: center;
 }
 
-/* 每個 btn-group 之後（相鄰的下一個）顯示垂直分隔線
-   會在群組間產生類似 "|" 的視覺 */
+/* 群組分隔線 */
 .toolbar-box .btn-group + .btn-group::before {
   content: "";
   position: absolute;
-  left: -10px; /* 線靠近左側群組邊緣 */
+  left: -10px;
   top: 50%;
   transform: translateY(-50%);
   width: 1px;
@@ -80,95 +79,51 @@
   border-radius: 1px;
 }
 
-/* 避免分隔線與按鈕太貼，補一些間距 */
 .toolbar-box .btn-group + .btn-group {
   padding-left: 12px;
   margin-left: 6px;
 }
 
-/* 如果某群組使用 ms-auto（右側 tags），分隔線仍會正確顯示 */
-.toolbar-box .btn-group.ms-auto + .btn-group::before { /* no-op for safety */ }
-
-/* 小調整：按鈕內 SVG 與文字對齊 */
-.toolbar-box .btn svg { vertical-align: middle; }
-
-/* 小螢幕時把分隔線隱藏以節省空間 */
-@media (max-width: 576px) {
-  .toolbar-box { padding: 6px; }
-  .toolbar-box .btn-group + .btn-group::before { display: none; }
-}
-
-/* 調整按鈕內 icon 大小與對齊 */
+/* 按鈕與 icon 對齊 */
 .btn-toolbar .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px; /* icon 與文字間距 */
+  gap: 6px;
   padding-left: 10px;
   padding-right: 10px;
 }
 
-/* 強制 svg 尺寸、取消額外空白並垂直置中 */
-.btn-toolbar .btn svg, .btn-toolbar .btn > svg {
+.btn-toolbar .btn svg,
+.btn-toolbar .btn > svg {
   width: 14px;
   height: 14px;
   flex: 0 0 14px;
   vertical-align: middle;
-  margin-right: 6px; /* icon 與文字間距 */
+  margin-right: 6px;
 }
 
-/* 移除 .btn-group 內部按鈕的分界線（讓按鈕看起來是一塊） */
+.btn-toolbar .badge {
+  font-weight: 600;
+}
+
+/* 群組內按鈕接縫 */
 .toolbar-box .btn-group .btn + .btn {
   margin-left: -1px;
   border-left: 0 !important;
   box-shadow: none !important;
 }
+
 .toolbar-box .btn-group .btn:first-child {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
+
 .toolbar-box .btn-group .btn:last-child {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-/* 小圖示：圓 + 短線（顯示於按鈕左側） */
-.list-item-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-  margin-right: 6px;
-  vertical-align: middle;
-  flex: 0 0 auto;
-}
-
-/* 圓形 */
-.list-item-icon::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border: 2px solid #5a6b80; /* 圓框顏色，可改 */
-  border-radius: 50%;
-  box-sizing: border-box;
-  display: inline-block;
-}
-
-/* 短線 */
-.list-item-icon::after {
-  content: "";
-  width: 10px;      /* 線長，可微調 */
-  height: 2px;
-  background-color: #5a6b80; /* 線條顏色，同色系 */
-  border-radius: 1px;
-  display: inline-block;
-}
-
-/* 小螢幕微調：隱藏短線以節省空間（可選） */
-@media (max-width: 480px) {
-  .list-item-icon::after { display: none; }
-}
-
-/* toolbar divider 顏色調淡，使視覺不突兀 */
+/* 分隔符號 */
 .toolbar-divider {
   width: 1px;
   height: 28px;
@@ -176,7 +131,7 @@
   margin: 0 12px;
 }
 
-/* 新增：排序箭頭樣式 */
+/* 排序箭頭 */
 .sort-arrow {
   display: inline-block;
   width: 14px;
@@ -186,4 +141,49 @@
   margin-right: 6px;
   color: currentColor;
   vertical-align: middle;
+}
+
+/* 版面比例：6/13 與 7/13 */
+@media (min-width: 768px) {
+  .col-ratio-7 {
+    flex: 0 0 calc(100% * 7 / 13);
+    max-width: calc(100% * 7 / 13);
+  }
+
+  .col-ratio-6 {
+    flex: 0 0 calc(100% * 6 / 13);
+    max-width: calc(100% * 6 / 13);
+  }
+}
+
+/* Console 區塊 */
+.console-box {
+  min-height: 150px;
+  overflow: auto;
+}
+
+.console-output {
+  margin: 0;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* 匯出 XML 時內嵌 pre 也要能斷行 */
+.console-output pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* 小螢幕 */
+@media (max-width: 576px) {
+  .toolbar-box {
+    padding: 6px;
+  }
+
+  .toolbar-box .btn-group + .btn-group::before {
+    display: none;
+  }
 }
