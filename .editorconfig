@@ -1,0 +1,5 @@
+root = true
+
+# 強制所有 C# 與 Razor 檔案使用 UTF-8 編碼儲存
+[*.{cs,razor}]
+charset = utf-8-bom
