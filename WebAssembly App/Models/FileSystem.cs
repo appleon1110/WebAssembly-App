@@ -5,6 +5,9 @@ using System.Xml.Serialization;
 
 namespace CloudFileManager.Models
 {
+    // 將 SortKey 列舉宣告在這裡，方便大家共用
+    public enum SortKey { Default, Name, Size, Extension }
+
     // 訪問者介面
     public interface IFileSystemVisitor
     {
@@ -42,6 +45,10 @@ namespace CloudFileManager.Models
     [XmlType("Folder")]
     public class Folder : FileSystemItem
     {
+        // 🌟 新增的屬性，用來把排序狀態記憶在資料夾上
+        public SortKey CurrentSortKey { get; set; } = SortKey.Default; 
+        public bool IsSortAscending { get; set; } = true;
+
         [XmlArray("Children")]
         [XmlArrayItem("FileSystemItem")]
         public List<FileSystemItem> Children { get; set; } = new();

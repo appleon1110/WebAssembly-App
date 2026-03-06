@@ -43,27 +43,32 @@
                     <div class="toolbar-divider" aria-hidden="true"></div>
 
                     <div class="btn-group" role="group" aria-label="sort">
+                        <!-- 名稱按鈕 -->
                         <button class="btn btn-sm @(IsActiveSort(SortKey.Name) ? "btn-primary text-white" : "btn-outline-secondary")"
-                                @onclick="() => SortSelected(SortKey.Name, !IsActiveSort(SortKey.Name) ? true : !activeSortAsc)">
+                                @onclick="() => SortSelected(SortKey.Name, !IsActiveSort(SortKey.Name) ? true : !IsActiveSortAsc())">
                             @if (IsActiveSort(SortKey.Name))
                             {
-                                <span class="sort-arrow">@(activeSortAsc ? "▲" : "▼")</span>
+                                <span class="sort-arrow">@(IsActiveSortAsc() ? "▲" : "▼")</span>
                             }
                             名稱
                         </button>
+
+                        <!-- 大小按鈕 -->
                         <button class="btn btn-sm @(IsActiveSort(SortKey.Size) ? "btn-primary text-white" : "btn-outline-secondary")"
-                                @onclick="() => SortSelected(SortKey.Size, !IsActiveSort(SortKey.Size) ? true : !activeSortAsc)">
+                                @onclick="() => SortSelected(SortKey.Size, !IsActiveSort(SortKey.Size) ? true : !IsActiveSortAsc())">
                             @if (IsActiveSort(SortKey.Size))
                             {
-                                <span class="sort-arrow">@(activeSortAsc ? "▲" : "▼")</span>
+                                <span class="sort-arrow">@(IsActiveSortAsc() ? "▲" : "▼")</span>
                             }
                             大小
                         </button>
+
+                        <!-- 類型按鈕 -->
                         <button class="btn btn-sm @(IsActiveSort(SortKey.Extension) ? "btn-primary text-white" : "btn-outline-secondary")"
-                                @onclick="() => SortSelected(SortKey.Extension, !IsActiveSort(SortKey.Extension) ? true : !activeSortAsc)">
+                                @onclick="() => SortSelected(SortKey.Extension, !IsActiveSort(SortKey.Extension) ? true : !IsActiveSortAsc())">
                             @if (IsActiveSort(SortKey.Extension))
                             {
-                                <span class="sort-arrow">@(activeSortAsc ? "▲" : "▼")</span>
+                                <span class="sort-arrow">@(IsActiveSortAsc() ? "▲" : "▼")</span>
                             }
                             類型
                         </button>
@@ -137,9 +142,23 @@
     private Stack<ICommand> _undo = new();
     private Stack<ICommand> _redo = new();
 
-    // 用於 UI 標示目前排序鍵與方向
-    private SortKey? activeSortKey = null;
-    private bool activeSortAsc = true;
+    // 取得目前應操作的目錄
+    private Folder? GetActiveFolder()
+    {
+        return selectedItem as Folder ?? FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
+    }
+
+    private bool IsActiveSort(SortKey key)
+    {
+        var folder = GetActiveFolder();
+        return folder != null && folder.CurrentSortKey == key;
+    }
+
+    private bool IsActiveSortAsc()
+    {
+        var folder = GetActiveFolder();
+        return folder != null && folder.IsSortAscending;
+    }
 
     protected override void OnInitialized()
     {
@@ -278,9 +297,6 @@
         ExecuteCommand(cmd);
     }
 
-    enum SortKey { Name, Size, Extension }
-
-    private bool IsActiveSort(SortKey key) => activeSortKey.HasValue && activeSortKey.Value == key;
 
     private void SortSelected(SortKey key, bool ascending)
     {
@@ -288,9 +304,9 @@
         if (folder == null) folder = FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
         if (folder == null) return;
 
-        // 更新 UI 狀態
-        activeSortKey = key;
-        activeSortAsc = ascending;
+        // 這兩行要刪除！否則 Command 備份到的 old state 會是錯的
+        // folder.CurrentSortKey = key;
+        // folder.IsSortAscending = ascending;
 
         var oldOrder = folder.Children.ToList();
         var cmd = new SortCommand(folder, key, ascending, oldOrder);
@@ -453,10 +469,20 @@
         private List<FileSystemItem> _oldOrder;
         private SortKey _key;
         private bool _asc;
+        
+        // 用於 Undo 恢復原本的排序狀態標示
+        private SortKey _oldSortKey;
+        private bool _oldSortAsc;
 
         public SortCommand(Folder folder, SortKey key, bool asc, List<FileSystemItem> oldOrder)
         {
-            _folder = folder; _key = key; _asc = asc; _oldOrder = new List<FileSystemItem>(oldOrder);
+            _folder = folder; 
+            _key = key; 
+            _asc = asc; 
+            _oldOrder = new List<FileSystemItem>(oldOrder);
+            
+            _oldSortKey = folder.CurrentSortKey;
+            _oldSortAsc = folder.IsSortAscending;
         }
 
         public void Execute()
@@ -475,11 +501,19 @@
                     break;
             }
             _folder.Children = sorted.ToList();
+
+            // 記下現在的狀態
+            _folder.CurrentSortKey = _key;
+            _folder.IsSortAscending = _asc;
         }
 
         public void Undo()
         {
             _folder.Children = new List<FileSystemItem>(_oldOrder);
+            
+            // 恢復之前的狀態
+            _folder.CurrentSortKey = _oldSortKey;
+            _folder.IsSortAscending = _oldSortAsc;
         }
     }
 }
