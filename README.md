@@ -1,6 +1,11 @@
 # 雲端檔案管理模擬系統 (Blazor WebAssembly)
 
 本專案以 `Blazor WebAssembly` 實作，主題為「雲端檔案管理系統」。
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-2ea44f?style=for-the-badge&logo=github)](https://appleon1110.github.io/WebAssembly-App/)
+
+👉 線上展示：<https://appleon1110.github.io/WebAssembly-App/>
+
 重點示範：
 
 - 樹狀結構（Composite）
