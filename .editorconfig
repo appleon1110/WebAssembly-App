@@ -1,5 +1,13 @@
 root = true
 
-# 強制所有 C# 與 Razor 檔案使用 UTF-8 編碼儲存
+# 強制所有 C# 與 Razor 檔案使用 UTF-8 含 BOM 的編碼
 [*.{cs,razor}]
 charset = utf-8-bom
+
+# All files
+[*]
+indent_style = space
+
+# Xml files
+[*.xml]
+indent_size = 2
