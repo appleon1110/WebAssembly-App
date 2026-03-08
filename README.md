@@ -2,10 +2,6 @@
 
 本專案以 `Blazor WebAssembly` 實作，主題為「雲端檔案管理系統」。
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-2ea44f?style=for-the-badge&logo=github)](https://appleon1110.github.io/WebAssembly-App/)
-[![CI](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml/badge.svg)](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml)
-
-👉 線上展示：<https://appleon1110.github.io/WebAssembly-App/>
 
 ## 🚀 快速檢視
 
@@ -14,7 +10,7 @@
 
 | Web 展示 | 自動化測試 |
 |---|---|
-| ![Web Demo Screenshot](docs/images/web-demo.png) | ![CI Screenshot](docs/images/ci-tests.png) |
+| <img width="1747" height="825" alt="image" src="https://github.com/user-attachments/assets/5b0248bc-5f68-4e33-984f-803918df7da5" />|<img width="1026" height="999" alt="image" src="https://github.com/user-attachments/assets/50549e5a-c66a-45ab-ba59-b50517da2e37" />|
 
 重點示範：
 
