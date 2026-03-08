@@ -97,3 +97,39 @@
 - .NET 8
 - Blazor WebAssembly
 - C# 12
+
+---
+
+## ✅ Automated Testing
+
+[![CI](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml/badge.svg)](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml)
+
+本專案已加入 `xUnit` 單元測試，並透過 GitHub Actions 自動執行。
+
+### 測試涵蓋內容
+
+- `SizeCalculator`：驗證樹狀結構總容量計算（案例：`121.5KB`）
+- `FileSearcher`：驗證副檔名搜尋與結果順序（案例：`.docx`）
+- `FileSystemXmlSerializer`：驗證 XML 根節點與檔案節點輸出格式
+
+### 目前測試案例
+
+- `SizeCalculator: Root/Sub 結構總容量應為 121.5KB`
+- `FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序`
+- `SerializeCustom_SingleRootFolder_ShouldUseFolderNameAsRootElement`
+
+### CI 會做什麼（`.github/workflows/ci.yml`）
+
+1. 還原與建置 solution
+2. 執行：
+   - `dotnet test "WebAssembly App.Tests/WebAssembly App.Tests.csproj"`
+   - 啟用詳細輸出（`console;verbosity=detailed`）
+   - 產生測試報告（`trx`）
+3. 上傳測試報告 Artifact（`test-results`）
+4. 在 PR 顯示測試報告（`Unit Test Report`）
+
+### 如何查看結果
+
+- GitHub：`Actions` → 選擇 `CI` workflow → 查看 `Test (detailed)` step
+- PR：查看 `Unit Test Report`
+- Artifact：下載 `test-results.trx` 檢視完整測試紀錄
