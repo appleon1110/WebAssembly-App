@@ -70,8 +70,6 @@ jobs:
           name: Unit Test Report
           path: "**/test-results.trx"
           reporter: dotnet-trx
-          list-tests: all
-          only-summary: false
-          max-annotations: 50
+          
 
           
