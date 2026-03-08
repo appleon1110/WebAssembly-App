@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "WebAssembly App",
   "resources": {
-    "hash": "sha256-NI+k2QrioiG3H6hWtROTehCQGiNDNoLW8yOMjBxv/t8=",
+    "hash": "sha256-TZRfREq1G50St9qEvIYaVKSKUTxfoMaAxB6xx67QA/4=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-NljIbpK/1KCj0+knpX8U77Rbl5kTtfFIuFjK7AuczEw="
     },
@@ -57,7 +57,7 @@
       "System.Xml.XDocument.wasm": "sha256-oqGoFTmyOsIKjg4tPcifvVSWE3cDkB/yg3VktXqVW58=",
       "System.Xml.XmlSerializer.wasm": "sha256-P1V3J39StjBXXRLkH206L89JwcwBLcrDSz3fCXTSB8Y=",
       "System.Private.CoreLib.wasm": "sha256-WRtwIQtOmF2rySt8jb8Yy6BPALqJJNeskV37k33UTYc=",
-      "WebAssembly App.wasm": "sha256-mD4OEPG51dMT7aM5HCAE5QOhJSUCY83FQurEO53eaCc="
+      "WebAssembly App.wasm": "sha256-1fJe+Hjjtaw1i5/pTOZ/TzcNHtt4CYgGqqZYbSVYiJ0="
     }
   },
   "cacheBootResources": true,
