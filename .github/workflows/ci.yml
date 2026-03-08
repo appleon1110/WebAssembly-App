@@ -26,14 +26,18 @@ jobs:
         run: dotnet build "WebAssembly App.sln" --configuration Release --no-restore
 
       - name: Test (detailed)
-        run: dotnet test "WebAssembly App.Tests/WebAssembly App.Tests.csproj" --configuration Release --collect:"XPlat Code Coverage" --results-directory "TestResults" --logger "trx;LogFileName=test-results.trx" --logger "console;verbosity=detailed"
+        run: |
+          set -o pipefail
+          dotnet test "WebAssembly App.Tests/WebAssembly App.Tests.csproj" --configuration Release --collect:"XPlat Code Coverage" --results-directory "TestResults" --logger "trx;LogFileName=test-results.trx" --logger "console;verbosity=detailed" | tee TestResults/test-console.log
 
-      - name: Upload test results
+      - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: "TestResults/**/*.trx"
+          path: |
+            TestResults/**/*.trx
+            TestResults/test-console.log
 
       - name: Publish test report
         if: always()
