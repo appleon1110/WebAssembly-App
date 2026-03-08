@@ -111,6 +111,32 @@
 - `Pages/Home.razor`
 - `Pages/Home.razor.css`
 
+### 5.2 搜尋/計算時的樹狀同步與同名檔修正
+
+針對 `Pages/Home.razor` 與 `Shared/FileNode.razor`，已補強遍歷時的 UI 同步行為：
+
+- `計算總大小`：
+  - 依 `Visiting:` 日誌逐筆移動焦點（動畫感）
+  - 會自動展開祖先資料夾
+
+- `副檔名搜尋`：
+  - 依 `[符合]` 日誌逐筆移動焦點
+  - 會自動展開祖先資料夾
+  - 保留多筆命中高亮標記（`HighlightedItems`）
+
+- 修正同名檔案問題：
+  - 新增 replay lookup（`_visitingLookup` / `_searchLookup`）
+  - 改用 queue 逐筆對應實際節點，避免同名時永遠命中第一個
+
+- 修正重複搜尋同條件失效問題：
+  - 每次執行前重建 lookup（`BuildReplayLookup()`）
+  - 避免 queue 被前一次 `Dequeue()` 用盡
+
+相關檔案：
+- `Pages/Home.razor`
+- `Shared/FileNode.razor`
+- `Models/Visitors.cs`
+
 ---
 
 

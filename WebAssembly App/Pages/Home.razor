@@ -99,7 +99,11 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-dark text-white">目錄結構</div>
                 <div class="card-body">
-                    <FileNode Items="rootItems" SelectedItem="selectedItem" OnSelect="OnSelectItem" />
+                    <FileNode Items="rootItems"
+                              SelectedItem="selectedItem"
+                              ExpandedItems="_expandedFolders"
+                              HighlightedItems="_matchedItems"
+                              OnSelect="OnSelectItem" />
                 </div>
             </div>
         </div>
@@ -162,6 +166,12 @@
     private FileSystemItem? selectedItem;
     private FileSystemItem? clipboardItem;
 
+    // 新增：由 Home 統一管理展開狀態，讓搜尋可控制樹狀展開
+    private HashSet<FileSystemItem> _expandedFolders = new();
+
+    // 搜尋命中集合（可同時高亮多個）
+    private HashSet<FileSystemItem> _matchedItems = new();
+
     private Stack<ICommand> _undo = new();
     private Stack<ICommand> _redo = new();
 
@@ -174,6 +184,12 @@
     private int _visitedNodes = 0;
     private int _totalNodes = 0;
     private int _progressPercent => _totalNodes == 0 ? 0 : (int)Math.Round((double)_visitedNodes * 100 / _totalNodes);
+
+    // 本輪 Replay 用，避免同名節點永遠選到第一個
+    private HashSet<FileSystemItem> _replayVisitedItems = new();
+
+    private Dictionary<string, Queue<FileSystemItem>> _visitingLookup = new(StringComparer.OrdinalIgnoreCase);
+private Dictionary<string, Queue<FileSystemItem>> _searchLookup = new(StringComparer.OrdinalIgnoreCase);
 
     // 取得目前應操作的目錄
     private Folder? GetActiveFolder()
@@ -236,6 +252,10 @@
         _currentNode = "-";
         _visitedNodes = 0;
         _totalNodes = 0;
+
+        // 計算大小不做命中標記，先清空高亮
+        _matchedItems.Clear();
+
         await InvokeAsync(StateHasChanged);
 
         try
@@ -245,7 +265,7 @@
 
             entries.Add(($"[計算完成] 系統總容量: {calc.TotalSize} KB", false));
             PrepareObserver(entries);
-
+            BuildReplayLookup();   // <- 一定要在搜尋也重建
             await ReplayLogsAsync(entries);
         }
         finally
@@ -276,6 +296,11 @@
         _currentNode = "-";
         _visitedNodes = 0;
         _totalNodes = 0;
+
+        // 每次搜尋前清空舊命中
+        _matchedItems.Clear();
+        selectedItem = null;
+
         await InvokeAsync(StateHasChanged);
 
         try
@@ -295,6 +320,7 @@
             }
 
             PrepareObserver(entries);
+            BuildReplayLookup();   // <- 一定要在搜尋也重建
             await ReplayLogsAsync(entries);
         }
         finally
@@ -307,14 +333,136 @@
     private async Task ReplayLogsAsync(List<(string Message, bool IsMatch)> entries)
     {
         consoleOutput = "";
+
+        // 重要：每次重播前清空，避免同名節點永遠回到第一個
+        _replayVisitedItems.Clear();
+
         foreach (var (message, isMatch) in entries)
         {
             UpdateObserverFromMessage(message);
+
+            // 所有 Visiting 都做逐筆選取（給計算大小也有動畫）
+            ApplyTraversalFocusFromMessage(message);
+
+            // 只有搜尋命中才加到高亮集合
+            ApplySearchFocusFromMessage(message);
 
             consoleOutput += BuildLogHtml(message, isMatch);
             await InvokeAsync(StateHasChanged);
             await Task.Delay(TraverseLogDelayMs);
         }
+    }
+
+    private void ApplyTraversalFocusFromMessage(string message)
+    {
+        if (!message.StartsWith("Visiting:", StringComparison.Ordinal)) return;
+
+        var path = message["Visiting:".Length..].Trim();
+        if (!_visitingLookup.TryGetValue(path, out var q) || q.Count == 0) return;
+
+        var item = q.Dequeue();
+        ExpandAncestors(item);
+        selectedItem = item;
+    }
+
+    private void ApplySearchFocusFromMessage(string message)
+    {
+        if (!TryExtractMatchedPath(message, out var path)) return;
+        if (!_searchLookup.TryGetValue(path, out var q) || q.Count == 0) return;
+
+        var item = q.Dequeue();
+        ExpandAncestors(item);
+        selectedItem = item;
+        _matchedItems.Add(item);
+    }
+
+    private static bool TryExtractMatchedPath(string message, out string path)
+    {
+        path = string.Empty;
+
+        const string matchPrefix = "[符合]";
+
+        // 與監控同步：遍歷當下命中就立刻觸发
+        if (message.StartsWith(matchPrefix, StringComparison.Ordinal))
+        {
+            path = message[matchPrefix.Length..].Trim();
+            return !string.IsNullOrWhiteSpace(path);
+        }
+
+        return false;
+    }
+
+    private bool TryExpandAndSelectByPath(string fullPath)
+    {
+        var segments = fullPath.Split('/', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length == 0) return false;
+
+        IReadOnlyList<FileSystemItem> current = rootItems;
+        FileSystemItem? matched = null;
+
+        for (int i = 0; i < segments.Length; i++)
+        {
+            var seg = segments[i];
+            var candidates = current
+                .Where(x => string.Equals(x.Name, seg, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (candidates.Count == 0) return false;
+
+            // 搜尋命中：同名時優先挑尚未命中的那個
+            matched = (i == segments.Length - 1)
+                ? candidates.FirstOrDefault(x => !_matchedItems.Contains(x)) ?? candidates[0]
+                : candidates[0];
+
+            if (matched is Folder folder)
+            {
+                _expandedFolders.Add(folder);
+                current = folder.Children;
+                continue;
+            }
+
+            if (i < segments.Length - 1) return false;
+        }
+
+        selectedItem = matched;
+        if (matched is not null) _matchedItems.Add(matched);
+        return matched is not null;
+    }
+
+    private bool TryExpandAndSelectByVisitingPath(string visitingPath)
+    {
+        var segments = visitingPath.Split("->", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length == 0) return false;
+
+        IReadOnlyList<FileSystemItem> current = rootItems;
+        FileSystemItem? matched = null;
+
+        for (int i = 0; i < segments.Length; i++)
+        {
+            var seg = segments[i];
+            var candidates = current
+                .Where(x => string.Equals(x.Name, seg, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (candidates.Count == 0) return false;
+
+            // Visiting 動畫：同名時優先挑本輪尚未播放過的
+            matched = candidates.FirstOrDefault(x => !_replayVisitedItems.Contains(x)) ?? candidates[0];
+
+            if (matched is Folder folder)
+            {
+                _expandedFolders.Add(folder);
+                current = folder.Children;
+                _replayVisitedItems.Add(matched);
+                continue;
+            }
+
+            if (i < segments.Length - 1) return false;
+        }
+
+        selectedItem = matched;
+        if (matched is not null) _replayVisitedItems.Add(matched);
+        return matched is not null;
     }
 
     private static string BuildLogHtml(string message, bool isMatch, string? extraCssClass = null)
@@ -476,10 +624,6 @@
         return null;
     }
 
-    
-
-        
-
     private void PrepareObserver(List<(string Message, bool IsMatch)> entries)
     {
         _visitedNodes = 0;
@@ -502,5 +646,55 @@
 
         var parts = path.Split("->", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         return parts.Length == 0 ? path : parts[^1];
+    }
+
+    private void BuildReplayLookup()
+    {
+        _visitingLookup.Clear();
+        _searchLookup.Clear();
+
+        foreach (var item in rootItems)
+        {
+            BuildReplayLookupRecursive(item, "", "");
+        }
+    }
+
+    private void BuildReplayLookupRecursive(FileSystemItem item, string visitingParent, string slashParent)
+    {
+        var visitingPath = string.IsNullOrEmpty(visitingParent) ? item.Name : $"{visitingParent} -> {item.Name}";
+        Enqueue(_visitingLookup, visitingPath, item);
+
+        var slashPath = string.IsNullOrEmpty(slashParent) ? item.Name : $"{slashParent}/{item.Name}";
+        if (item is not Folder) Enqueue(_searchLookup, slashPath, item);
+
+        if (item is Folder f)
+        {
+            foreach (var child in f.Children)
+            {
+                BuildReplayLookupRecursive(child, visitingPath, slashPath);
+            }
+        }
+    }
+
+    private static void Enqueue(Dictionary<string, Queue<FileSystemItem>> map, string key, FileSystemItem item)
+    {
+        if (!map.TryGetValue(key, out var q))
+        {
+            q = new Queue<FileSystemItem>();
+            map[key] = q;
+        }
+        q.Enqueue(item);
+    }
+
+    private void ExpandAncestors(FileSystemItem item)
+    {
+        if (item is Folder f) _expandedFolders.Add(f);
+
+        var parent = FindParentFolder(item);
+        while (parent != null)
+        {
+            _expandedFolders.Add(parent);
+            parent = FindParentFolder(parent);
+        }
     }
 }

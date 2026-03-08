@@ -12,7 +12,7 @@
                     </button>
                     <span class="fw-bold text-primary"
                           @onclick="() => SelectItem(folder)"
-                          style="cursor:pointer;@(IsSelected(folder) ? "background:#e9f5ff;padding:2px 6px;border-radius:4px;" : "")">
+                          style="cursor:pointer;@GetNodeStyle(folder)">
                         📁 @folder.Name
                     </span>
 
@@ -29,7 +29,11 @@
 
                 @if (IsExpanded(folder))
                 {
-                    <FileNode Items="folder.Children" SelectedItem="SelectedItem" OnSelect="OnSelect" />
+                    <FileNode Items="folder.Children"
+                              SelectedItem="SelectedItem"
+                              ExpandedItems="ExpandedItems"
+                              HighlightedItems="HighlightedItems"
+                              OnSelect="OnSelect" />
                 }
             }
             else
@@ -42,7 +46,8 @@
                     </span>
                     <div style="min-width:0; width:100%;">
                         <div class="d-flex align-items-center">
-                            <div class="fw-bold text-truncate" style="max-width:220px; cursor:pointer;@(IsSelected(item) ? "background:#e9f5ff;padding:2px 6px;border-radius:4px;" : "")"
+                            <div class="fw-bold text-truncate"
+                                 style="max-width:220px; cursor:pointer;@GetNodeStyle(item)"
                                  @onclick="() => SelectItem(item)">
                                 @item.Name
                             </div>
@@ -75,18 +80,23 @@
     [Parameter] public List<FileSystemItem> Items { get; set; } = new();
     [Parameter] public FileSystemItem? SelectedItem { get; set; }
     [Parameter] public EventCallback<FileSystemItem?> OnSelect { get; set; }
+    [Parameter] public HashSet<FileSystemItem>? ExpandedItems { get; set; }
 
-    private HashSet<FileSystemItem> _expanded = new();
+    // 新增：搜尋命中高亮集合
+    [Parameter] public HashSet<FileSystemItem>? HighlightedItems { get; set; }
+
+    private readonly HashSet<FileSystemItem> _localExpanded = new();
+    private HashSet<FileSystemItem> ExpandedSet => ExpandedItems ?? _localExpanded;
 
     private void Toggle(FileSystemItem folder)
     {
-        if (!_expanded.Remove(folder))
+        if (!ExpandedSet.Remove(folder))
         {
-            _expanded.Add(folder);
+            ExpandedSet.Add(folder);
         }
     }
 
-    private bool IsExpanded(FileSystemItem folder) => _expanded.Contains(folder);
+    private bool IsExpanded(FileSystemItem folder) => ExpandedSet.Contains(folder);
 
     private void SelectItem(FileSystemItem? item)
     {
@@ -97,7 +107,15 @@
 
     private bool IsSelected(FileSystemItem item) => SelectedItem != null && ReferenceEquals(SelectedItem, item);
 
-    // Tag -> badge class 映射（Bootstrap 類別）
+    private bool IsHighlighted(FileSystemItem item) => HighlightedItems?.Contains(item) == true;
+
+    private string GetNodeStyle(FileSystemItem item)
+    {
+        if (IsSelected(item)) return "background:#e9f5ff;padding:2px 6px;border-radius:4px;";
+        if (IsHighlighted(item)) return "background:#fff3cd;padding:2px 6px;border-radius:4px;";
+        return "";
+    }
+
     private string GetTagBadgeClass(string tag)
     {
         if (string.IsNullOrWhiteSpace(tag)) return "badge bg-secondary";
