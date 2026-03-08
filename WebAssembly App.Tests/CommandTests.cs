@@ -44,6 +44,96 @@ public class CommandTests
         Assert.Equal("b.txt", folder.Children[1].Name);
     }
 
+    [Fact(DisplayName = "TagToggleCommand: Execute + Undo 應可切換並還原標籤")]
+    public void TagToggleCommand_ExecuteAndUndo_ShouldWork()
+    {
+        var item = new TextFile { Name = "note.txt", SizeKB = 1, Tags = new List<string>() };
+
+        _output.WriteLine("=== Case 1: 原本無 Tag，Execute 後應新增，Undo 後應移除 ===");
+        _output.WriteLine($"Before: [{string.Join(", ", item.Tags)}]");
+
+        var addTagCmd = new TagToggleCommand(item, "Urgent");
+        addTagCmd.Execute();
+
+        _output.WriteLine($"After Execute: [{string.Join(", ", item.Tags)}]");
+        Assert.Contains("Urgent", item.Tags);
+
+        addTagCmd.Undo();
+        _output.WriteLine($"After Undo: [{string.Join(", ", item.Tags)}]");
+        Assert.DoesNotContain("Urgent", item.Tags);
+
+        _output.WriteLine("=== Case 2: 原本有 Tag，Execute 後應移除，Undo 後應還原 ===");
+        item.Tags.Add("Work");
+        _output.WriteLine($"Before: [{string.Join(", ", item.Tags)}]");
+
+        var removeTagCmd = new TagToggleCommand(item, "Work");
+        removeTagCmd.Execute();
+
+        _output.WriteLine($"After Execute: [{string.Join(", ", item.Tags)}]");
+        Assert.DoesNotContain("Work", item.Tags);
+
+        removeTagCmd.Undo();
+        _output.WriteLine($"After Undo: [{string.Join(", ", item.Tags)}]");
+        Assert.Contains("Work", item.Tags);
+    }
+
+    [Fact(DisplayName = "Redo: 撤銷後重做應重新套用上一個命令")]
+    public void Redo_ShouldReapplyLastUndoneCommand()
+    {
+        var folder = new Folder { Name = "Root" };
+        folder.Children.Add(new TextFile { Name = "a.txt", SizeKB = 1 });
+
+        var undo = new Stack<ICommand>();
+        var redo = new Stack<ICommand>();
+
+        void ExecuteCommand(ICommand cmd)
+        {
+            cmd.Execute();
+            undo.Push(cmd);
+            redo.Clear();
+        }
+
+        void UndoCommand()
+        {
+            if (!undo.Any()) return;
+            var cmd = undo.Pop();
+            cmd.Undo();
+            redo.Push(cmd);
+        }
+
+        void RedoCommand()
+        {
+            if (!redo.Any()) return;
+            var cmd = redo.Pop();
+            cmd.Execute();
+            undo.Push(cmd);
+        }
+
+        _output.WriteLine("=== 初始 ===");
+        _output.WriteLine(DescribeChildren(folder));
+
+        var addCmd = new AddCommand(folder, new TextFile { Name = "b.txt", SizeKB = 2 });
+        ExecuteCommand(addCmd);
+
+        _output.WriteLine("=== Execute(Add) 後 ===");
+        _output.WriteLine(DescribeChildren(folder));
+        Assert.Equal(2, folder.Children.Count);
+
+        UndoCommand();
+
+        _output.WriteLine("=== Undo 後 ===");
+        _output.WriteLine(DescribeChildren(folder));
+        Assert.Single(folder.Children);
+        Assert.Equal("a.txt", folder.Children[0].Name);
+
+        RedoCommand();
+
+        _output.WriteLine("=== Redo 後 ===");
+        _output.WriteLine(DescribeChildren(folder));
+        Assert.Equal(2, folder.Children.Count);
+        Assert.Equal("b.txt", folder.Children[1].Name);
+    }
+
     public static IEnumerable<object[]> SortCases()
     {
         yield return new object[] { SortKey.Name, true, new[] { "a.docx", "b.txt", "c.png" } };

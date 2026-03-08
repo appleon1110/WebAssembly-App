@@ -7,6 +7,15 @@
 
 👉 線上展示：<https://appleon1110.github.io/WebAssembly-App/>
 
+## 🚀 快速檢視
+
+- 🌐 **Web Demo**：<https://appleon1110.github.io/WebAssembly-App/>
+- ✅ **CI / Automated Tests**：<https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml>
+
+| Web 展示 | 自動化測試 |
+|---|---|
+| ![Web Demo Screenshot](docs/images/web-demo.png) | ![CI Screenshot](docs/images/ci-tests.png) |
+
 重點示範：
 
 - 樹狀結構（Composite）
@@ -110,28 +119,36 @@
 
 本專案已加入 `xUnit` 單元測試，並透過 GitHub Actions 自動執行。
 
-### 測試涵蓋內容
+### 測試分類（13 項）
 
-- `SizeCalculator`：列出所有文件與大小，驗證總容量（`121.5KB`）
-- `FileSearcher`：先列出所有文件，再列出搜尋命中結果與順序
-- `FileSystemXmlSerializer`：驗證 XML 根節點與檔案節點輸出格式
-- `Copy/Paste`：驗證深拷貝、貼上後與原物件狀態獨立
-- `DeleteCommand`：顯示刪除前 / 刪除後 / Undo 還原後結構
-- `SortCommand`：顯示原始排序與排序後結果（含 `SizeKB`），並驗證 Undo 還原
+#### A. Visitor 測試（2）
+1. `SizeCalculator: Root/Sub 結構總容量應為 121.5KB`
+2. `FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序`
+
+#### B. Command 測試（9）
+1. `DeleteCommand: Execute 刪除，Undo 還原原位置`
+2. `TagToggleCommand: Execute + Undo 應可切換並還原標籤`
+3. `Redo: 撤銷後重做應重新套用上一個命令`
+4. `SortCommand ...`（Name ASC）
+5. `SortCommand ...`（Name DESC）
+6. `SortCommand ...`（Size ASC）
+7. `SortCommand ...`（Size DESC）
+8. `SortCommand ...`（Extension ASC）
+9. `SortCommand ...`（Extension DESC）
+
+#### C. Copy / Clone 測試（1）
+1. `Copy/Paste: 深拷貝後修改副本不影響原物件，且可貼上到目標資料夾`
+
+#### D. XML Serializer 測試（1）
+1. `XML匯出: 顯示資料夾結構與輸出XML`
 
 ### CI 會做什麼（`.github/workflows/ci.yml`）
 
 1. 還原與建置 solution
-2. 執行：
-   - `dotnet test "WebAssembly App.Tests/WebAssembly App.Tests.csproj"`
-   - 啟用詳細輸出（`console;verbosity=detailed`）
-   - 產生測試報告（`trx`）
-3. 上傳測試報告 Artifact（`test-results`）
-4. 在 PR 顯示測試報告（`Unit Test Report`）
+2. 執行 `dotnet test "WebAssembly App.Tests/WebAssembly App.Tests.csproj"`
+3. 輸出詳細 log（`console;verbosity=detailed`）
+4. 產生 `trx` 測試報告
+5. 上傳 Artifact（`test-results`）
+6. 在 PR 顯示 `Unit Test Report`
 
-### 如何查看結果
-
-- GitHub：`Actions` → 選擇 `CI` workflow → 查看 `Test (detailed)` step
-- PR：查看 `Unit Test Report`
-- Artifact：下載 `test-results.trx` 檢視完整測試紀錄
 
