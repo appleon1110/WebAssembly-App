@@ -1,52 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TestRun id="42d32a3a-b3f0-4b98-81df-ab3502ec11c3" name="@runnervm0kj6c 2026-03-08 09:53:32" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
-  <Times creation="2026-03-08T09:53:32.6660098+00:00" queuing="2026-03-08T09:53:32.6660099+00:00" start="2026-03-08T09:53:28.4641743+00:00" finish="2026-03-08T09:53:33.0268737+00:00" />
-  <TestSettings name="default" id="6c161287-7362-4db1-a002-416ceda393bb">
-    <Deployment runDeploymentRoot="_runnervm0kj6c_2026-03-08_09_53_32" />
+<TestRun id="f74180ab-8039-4c94-8a41-44bba5a9cdbd" name="@runnervm0kj6c 2026-03-08 10:22:17" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-03-08T10:22:17.7953287+00:00" queuing="2026-03-08T10:22:17.7953288+00:00" start="2026-03-08T10:22:14.1631262+00:00" finish="2026-03-08T10:22:18.0873988+00:00" />
+  <TestSettings name="default" id="9bacb520-c809-40af-8c4b-64be0d8ac2ac">
+    <Deployment runDeploymentRoot="_runnervm0kj6c_2026-03-08_10_22_17" />
   </TestSettings>
   <Results>
-    <UnitTestResult executionId="17ad7f5e-f1d6-480b-b458-edf63e42e7ba" testId="34e775c0-e3a1-dfd3-eaf7-d021cdbdd331" testName="TagToggleCommand: Execute + Undo 應可切換並還原標籤" computerName="runnervm0kj6c" duration="00:00:00.0048161" startTime="2026-03-08T09:53:32.6033982+00:00" endTime="2026-03-08T09:53:32.6033982+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17ad7f5e-f1d6-480b-b458-edf63e42e7ba">
-      <Output>
-        <StdOut>=== Case 1: 原本無 Tag，Execute 後應新增，Undo 後應移除 ===
-Before: []
-After Execute: [Urgent]
-After Undo: []
-=== Case 2: 原本有 Tag，Execute 後應移除，Undo 後應還原 ===
-Before: [Work]
-After Execute: []
-After Undo: [Work]</StdOut>
-      </Output>
-    </UnitTestResult>
-    <UnitTestResult executionId="e3e491ea-2455-4743-bc17-d9b7fcb64d9d" testId="49861855-1e14-aa94-cd07-92ff4314b753" testName="Redo: 撤銷後重做應重新套用上一個命令" computerName="runnervm0kj6c" duration="00:00:00.0009514" startTime="2026-03-08T09:53:32.6431266+00:00" endTime="2026-03-08T09:53:32.6431267+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e3e491ea-2455-4743-bc17-d9b7fcb64d9d">
-      <Output>
-        <StdOut>=== 初始 ===
-1. a.txt | 1KB
-=== Execute(Add) 後 ===
-1. a.txt | 1KB
-2. b.txt | 2KB
-=== Undo 後 ===
-1. a.txt | 1KB
-=== Redo 後 ===
-1. a.txt | 1KB
-2. b.txt | 2KB</StdOut>
-      </Output>
-    </UnitTestResult>
-    <UnitTestResult executionId="cd9288b0-2cea-4347-b04f-2120366ffeba" testId="ca664d6a-a82c-3498-3748-ba315d33c736" testName="Copy/Paste: 深拷貝後修改副本不影響原物件，且可貼上到目標資料夾" computerName="runnervm0kj6c" duration="00:00:00.0159494" startTime="2026-03-08T09:53:32.5908612+00:00" endTime="2026-03-08T09:53:32.5908964+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd9288b0-2cea-4347-b04f-2120366ffeba">
-      <Output>
-        <StdOut>=== 原始 Source ===
-[Source]
-- File: a.txt (1KB)
-=== 貼上前 Target ===
-[Target]
-=== 貼上後 Target ===
-[Target]
-- Folder: Source (Children=1)
-=== 修改貼上副本後 Source ===
-[Source]
-- File: a.txt (1KB)</StdOut>
-      </Output>
-    </UnitTestResult>
-    <UnitTestResult executionId="e4baa7de-1d92-43f5-ac53-d6ef1d79cb56" testId="525d7db0-126c-31c7-17c6-e536a1e55a73" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Name, asc: False, expectedOrder: [&quot;c.png&quot;, &quot;b.txt&quot;, &quot;a.docx&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0001204" startTime="2026-03-08T09:53:32.6422400+00:00" endTime="2026-03-08T09:53:32.6422401+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e4baa7de-1d92-43f5-ac53-d6ef1d79cb56">
+    <UnitTestResult executionId="30999cd2-f73b-4fb1-aa66-5815c77ebc5b" testId="525d7db0-126c-31c7-17c6-e536a1e55a73" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Name, asc: False, expectedOrder: [&quot;c.png&quot;, &quot;b.txt&quot;, &quot;a.docx&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0001258" startTime="2026-03-08T10:22:17.7736170+00:00" endTime="2026-03-08T10:22:17.7736171+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30999cd2-f73b-4fb1-aa66-5815c77ebc5b">
       <Output>
         <StdOut>=== 原始排序 [Name, DESC] ===
 1. b.txt | 20KB
@@ -62,7 +21,7 @@ After Undo: [Work]</StdOut>
 3. c.png | 15KB</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="9923224f-e332-49f3-8ff9-77d1b342f59c" testId="8192fb1d-0972-44f4-e907-82be49f66815" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Extension, asc: False, expectedOrder: [&quot;b.txt&quot;, &quot;c.png&quot;, &quot;a.docx&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0001200" startTime="2026-03-08T09:53:32.6427065+00:00" endTime="2026-03-08T09:53:32.6427066+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9923224f-e332-49f3-8ff9-77d1b342f59c">
+    <UnitTestResult executionId="20a70851-0214-4f52-b62d-a8cb0da00d6f" testId="8192fb1d-0972-44f4-e907-82be49f66815" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Extension, asc: False, expectedOrder: [&quot;b.txt&quot;, &quot;c.png&quot;, &quot;a.docx&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0001423" startTime="2026-03-08T10:22:17.7740342+00:00" endTime="2026-03-08T10:22:17.7740343+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20a70851-0214-4f52-b62d-a8cb0da00d6f">
       <Output>
         <StdOut>=== 原始排序 [Extension, DESC] ===
 1. b.txt | 20KB
@@ -78,23 +37,19 @@ After Undo: [Work]</StdOut>
 3. c.png | 15KB</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="70ea5237-e374-49eb-ae87-5186acd2d424" testId="4f511443-2d45-1216-3398-bf084c7894f9" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Extension, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;c.png&quot;, &quot;b.txt&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0004111" startTime="2026-03-08T09:53:32.6115142+00:00" endTime="2026-03-08T09:53:32.6115143+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70ea5237-e374-49eb-ae87-5186acd2d424">
+    <UnitTestResult executionId="58b875d4-32a9-4660-b846-16d0c18f7fdf" testId="34e775c0-e3a1-dfd3-eaf7-d021cdbdd331" testName="TagToggleCommand: Execute + Undo 應可切換並還原標籤" computerName="runnervm0kj6c" duration="00:00:00.0044525" startTime="2026-03-08T10:22:17.7374909+00:00" endTime="2026-03-08T10:22:17.7374910+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="58b875d4-32a9-4660-b846-16d0c18f7fdf">
       <Output>
-        <StdOut>=== 原始排序 [Extension, ASC] ===
-1. b.txt | 20KB
-2. a.docx | 10KB
-3. c.png | 15KB
-=== 排序後 [Extension, ASC] ===
-1. a.docx | 10KB
-2. c.png | 15KB
-3. b.txt | 20KB
-=== Undo 後 ===
-1. b.txt | 20KB
-2. a.docx | 10KB
-3. c.png | 15KB</StdOut>
+        <StdOut>=== Case 1: 原本無 Tag，Execute 後應新增，Undo 後應移除 ===
+Before: []
+After Execute: [Urgent]
+After Undo: []
+=== Case 2: 原本有 Tag，Execute 後應移除，Undo 後應還原 ===
+Before: [Work]
+After Execute: []
+After Undo: [Work]</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="f93c089d-14a5-44e7-b4e9-b2c9b79d212c" testId="8db53027-0c8c-38f4-d09e-e1905ea9d430" testName="XML匯出: 顯示資料夾結構與輸出XML" computerName="runnervm0kj6c" duration="00:00:00.0550580" startTime="2026-03-08T09:53:32.6433748+00:00" endTime="2026-03-08T09:53:32.6433748+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f93c089d-14a5-44e7-b4e9-b2c9b79d212c">
+    <UnitTestResult executionId="dec6b91d-d6ed-4195-b33a-839dec346211" testId="8db53027-0c8c-38f4-d09e-e1905ea9d430" testName="XML匯出: 顯示資料夾結構與輸出XML" computerName="runnervm0kj6c" duration="00:00:00.0522003" startTime="2026-03-08T10:22:17.7746850+00:00" endTime="2026-03-08T10:22:17.7746850+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dec6b91d-d6ed-4195-b33a-839dec346211">
       <Output>
         <StdOut>=== 資料夾結構 ===
 [Folder] 根目錄_Root
@@ -113,7 +68,22 @@ After Undo: [Work]</StdOut>
 &lt;/根目錄_Root&gt;</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="846ba90f-e9c8-4f4b-abb8-b7698a017bad" testId="44d499f6-db42-7df6-1c07-7dd61e8b738d" testName="DeleteCommand: Execute 刪除，Undo 還原原位置" computerName="runnervm0kj6c" duration="00:00:00.0180972" startTime="2026-03-08T09:53:32.6014836+00:00" endTime="2026-03-08T09:53:32.6014837+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="846ba90f-e9c8-4f4b-abb8-b7698a017bad">
+    <UnitTestResult executionId="3c7b928a-a1f9-423b-98a4-534958b30b51" testId="9b07c2c2-ac51-af37-9324-2fc413a1ec7c" testName="SizeCalculator: Root/Sub 結構總容量應為 121.5KB" computerName="runnervm0kj6c" duration="00:00:00.0026516" startTime="2026-03-08T10:22:17.7372465+00:00" endTime="2026-03-08T10:22:17.7372465+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c7b928a-a1f9-423b-98a4-534958b30b51">
+      <Output>
+        <StdOut>=== 所有文件與大小 ===
+Root/a.docx | 100KB
+Root/b.txt | 1.5KB
+Root/Sub/c.png | 20KB
+=== Traversal Logs (SizeCalculator) ===
+Visiting: Root
+Visiting: Root -&gt; a.docx
+Visiting: Root -&gt; b.txt
+Visiting: Root -&gt; Sub
+Visiting: Root -&gt; Sub -&gt; c.png
+總容量(Actual): 121.5KB</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ebf35533-dd92-4d54-8dc3-60d118866f14" testId="44d499f6-db42-7df6-1c07-7dd61e8b738d" testName="DeleteCommand: Execute 刪除，Undo 還原原位置" computerName="runnervm0kj6c" duration="00:00:00.0176704" startTime="2026-03-08T10:22:17.7352570+00:00" endTime="2026-03-08T10:22:17.7352570+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebf35533-dd92-4d54-8dc3-60d118866f14">
       <Output>
         <StdOut>=== 刪除前結構 ===
 1. a.txt | 1KB
@@ -125,7 +95,23 @@ After Undo: [Work]</StdOut>
 2. b.txt | 2KB</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="d2556b89-783e-4a8c-b3de-e6185dc34366" testId="dad94f22-a745-039e-5a8f-b20f65639e25" testName="FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序" computerName="runnervm0kj6c" duration="00:00:00.0180376" startTime="2026-03-08T09:53:32.6006458+00:00" endTime="2026-03-08T09:53:32.6006460+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2556b89-783e-4a8c-b3de-e6185dc34366">
+    <UnitTestResult executionId="e649bb66-5f08-4e57-a168-bd86fa6fe7b5" testId="db1b93af-bb5a-786d-0f01-1b56eac768ff" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Name, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;b.txt&quot;, &quot;c.png&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0001295" startTime="2026-03-08T10:22:17.7730238+00:00" endTime="2026-03-08T10:22:17.7730240+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e649bb66-5f08-4e57-a168-bd86fa6fe7b5">
+      <Output>
+        <StdOut>=== 原始排序 [Name, ASC] ===
+1. b.txt | 20KB
+2. a.docx | 10KB
+3. c.png | 15KB
+=== 排序後 [Name, ASC] ===
+1. a.docx | 10KB
+2. b.txt | 20KB
+3. c.png | 15KB
+=== Undo 後 ===
+1. b.txt | 20KB
+2. a.docx | 10KB
+3. c.png | 15KB</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="18a6f5d6-c8cd-4a72-80c1-cd4175570f5f" testId="dad94f22-a745-039e-5a8f-b20f65639e25" testName="FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序" computerName="runnervm0kj6c" duration="00:00:00.0174362" startTime="2026-03-08T10:22:17.7359339+00:00" endTime="2026-03-08T10:22:17.7359339+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18a6f5d6-c8cd-4a72-80c1-cd4175570f5f">
       <Output>
         <StdOut>=== 搜尋前所有文件 ===
 Root/Spec.DOCX | 10KB
@@ -143,22 +129,23 @@ Root/Spec.DOCX
 Root/Note.docx</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="2362867c-5692-422a-8dc3-5f9d4b6c4a69" testId="9b07c2c2-ac51-af37-9324-2fc413a1ec7c" testName="SizeCalculator: Root/Sub 結構總容量應為 121.5KB" computerName="runnervm0kj6c" duration="00:00:00.0028120" startTime="2026-03-08T09:53:32.6030927+00:00" endTime="2026-03-08T09:53:32.6030928+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2362867c-5692-422a-8dc3-5f9d4b6c4a69">
+    <UnitTestResult executionId="05fd7cac-23f7-444e-b492-bdeaeb38c1ed" testId="4f511443-2d45-1216-3398-bf084c7894f9" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Extension, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;c.png&quot;, &quot;b.txt&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0003200" startTime="2026-03-08T10:22:17.7445371+00:00" endTime="2026-03-08T10:22:17.7445372+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="05fd7cac-23f7-444e-b492-bdeaeb38c1ed">
       <Output>
-        <StdOut>=== 所有文件與大小 ===
-Root/a.docx | 100KB
-Root/b.txt | 1.5KB
-Root/Sub/c.png | 20KB
-=== Traversal Logs (SizeCalculator) ===
-Visiting: Root
-Visiting: Root -&gt; a.docx
-Visiting: Root -&gt; b.txt
-Visiting: Root -&gt; Sub
-Visiting: Root -&gt; Sub -&gt; c.png
-總容量(Actual): 121.5KB</StdOut>
+        <StdOut>=== 原始排序 [Extension, ASC] ===
+1. b.txt | 20KB
+2. a.docx | 10KB
+3. c.png | 15KB
+=== 排序後 [Extension, ASC] ===
+1. a.docx | 10KB
+2. c.png | 15KB
+3. b.txt | 20KB
+=== Undo 後 ===
+1. b.txt | 20KB
+2. a.docx | 10KB
+3. c.png | 15KB</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="9a81ee82-6dd1-47bb-91e9-185fc4778db7" testId="bc6f98b5-80f5-ba59-7986-5516cb892959" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Size, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;c.png&quot;, &quot;b.txt&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0007167" startTime="2026-03-08T09:53:32.6108218+00:00" endTime="2026-03-08T09:53:32.6108220+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a81ee82-6dd1-47bb-91e9-185fc4778db7">
+    <UnitTestResult executionId="91a4bc08-794a-40d9-bf0c-ee373da4e3f0" testId="bc6f98b5-80f5-ba59-7986-5516cb892959" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Size, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;c.png&quot;, &quot;b.txt&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0005818" startTime="2026-03-08T10:22:17.7439516+00:00" endTime="2026-03-08T10:22:17.7439517+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="91a4bc08-794a-40d9-bf0c-ee373da4e3f0">
       <Output>
         <StdOut>=== 原始排序 [Size, ASC] ===
 1. b.txt | 20KB
@@ -174,7 +161,21 @@ Visiting: Root -&gt; Sub -&gt; c.png
 3. c.png | 15KB</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="92d9c0dc-e234-4caa-8182-43806baccbf7" testId="10fa1976-85f7-473d-e3c1-70bc09f4aacd" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Size, asc: False, expectedOrder: [&quot;b.txt&quot;, &quot;c.png&quot;, &quot;a.docx&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0138679" startTime="2026-03-08T09:53:32.6100288+00:00" endTime="2026-03-08T09:53:32.6100289+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="92d9c0dc-e234-4caa-8182-43806baccbf7">
+    <UnitTestResult executionId="190fe32f-09ea-424e-a7ad-3e6dc33d6a14" testId="49861855-1e14-aa94-cd07-92ff4314b753" testName="Redo: 撤銷後重做應重新套用上一個命令" computerName="runnervm0kj6c" duration="00:00:00.0009201" startTime="2026-03-08T10:22:17.7744380+00:00" endTime="2026-03-08T10:22:17.7744381+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="190fe32f-09ea-424e-a7ad-3e6dc33d6a14">
+      <Output>
+        <StdOut>=== 初始 ===
+1. a.txt | 1KB
+=== Execute(Add) 後 ===
+1. a.txt | 1KB
+2. b.txt | 2KB
+=== Undo 後 ===
+1. a.txt | 1KB
+=== Redo 後 ===
+1. a.txt | 1KB
+2. b.txt | 2KB</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6e8473e2-2827-4174-8c59-0a8c0a5892dd" testId="10fa1976-85f7-473d-e3c1-70bc09f4aacd" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Size, asc: False, expectedOrder: [&quot;b.txt&quot;, &quot;c.png&quot;, &quot;a.docx&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0135831" startTime="2026-03-08T10:22:17.7431942+00:00" endTime="2026-03-08T10:22:17.7431943+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e8473e2-2827-4174-8c59-0a8c0a5892dd">
       <Output>
         <StdOut>=== 原始排序 [Size, DESC] ===
 1. b.txt | 20KB
@@ -190,91 +191,90 @@ Visiting: Root -&gt; Sub -&gt; c.png
 3. c.png | 15KB</StdOut>
       </Output>
     </UnitTestResult>
-    <UnitTestResult executionId="6d41db71-f10f-4f55-ac05-11add887979a" testId="db1b93af-bb5a-786d-0f01-1b56eac768ff" testName="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Name, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;b.txt&quot;, &quot;c.png&quot;])" computerName="runnervm0kj6c" duration="00:00:00.0001448" startTime="2026-03-08T09:53:32.6416779+00:00" endTime="2026-03-08T09:53:32.6416780+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d41db71-f10f-4f55-ac05-11add887979a">
+    <UnitTestResult executionId="2daf410c-1228-454c-88d8-a26001638899" testId="ca664d6a-a82c-3498-3748-ba315d33c736" testName="Copy/Paste: 深拷貝後修改副本不影響原物件，且可貼上到目標資料夾" computerName="runnervm0kj6c" duration="00:00:00.0153754" startTime="2026-03-08T10:22:17.7256023+00:00" endTime="2026-03-08T10:22:17.7256317+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2daf410c-1228-454c-88d8-a26001638899">
       <Output>
-        <StdOut>=== 原始排序 [Name, ASC] ===
-1. b.txt | 20KB
-2. a.docx | 10KB
-3. c.png | 15KB
-=== 排序後 [Name, ASC] ===
-1. a.docx | 10KB
-2. b.txt | 20KB
-3. c.png | 15KB
-=== Undo 後 ===
-1. b.txt | 20KB
-2. a.docx | 10KB
-3. c.png | 15KB</StdOut>
+        <StdOut>=== 原始 Source ===
+[Source]
+- File: a.txt (1KB)
+=== 貼上前 Target ===
+[Target]
+=== 貼上後 Target ===
+[Target]
+- Folder: Source (Children=1)
+=== 修改貼上副本後 Source ===
+[Source]
+- File: a.txt (1KB)</StdOut>
       </Output>
     </UnitTestResult>
   </Results>
   <TestDefinitions>
     <UnitTest name="XML匯出: 顯示資料夾結構與輸出XML" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="8db53027-0c8c-38f4-d09e-e1905ea9d430">
-      <Execution id="f93c089d-14a5-44e7-b4e9-b2c9b79d212c" />
+      <Execution id="dec6b91d-d6ed-4195-b33a-839dec346211" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.FileSystemXmlSerializerTests" name="SerializeCustom_SingleRootFolder_ShouldUseFolderNameAsRootElement" />
     </UnitTest>
     <UnitTest name="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Name, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;b.txt&quot;, &quot;c.png&quot;])" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="db1b93af-bb5a-786d-0f01-1b56eac768ff">
-      <Execution id="6d41db71-f10f-4f55-ac05-11add887979a" />
+      <Execution id="e649bb66-5f08-4e57-a168-bd86fa6fe7b5" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="SortCommand_ShouldSortAndUndo" />
     </UnitTest>
     <UnitTest name="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Extension, asc: False, expectedOrder: [&quot;b.txt&quot;, &quot;c.png&quot;, &quot;a.docx&quot;])" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="8192fb1d-0972-44f4-e907-82be49f66815">
-      <Execution id="9923224f-e332-49f3-8ff9-77d1b342f59c" />
+      <Execution id="20a70851-0214-4f52-b62d-a8cb0da00d6f" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="SortCommand_ShouldSortAndUndo" />
     </UnitTest>
     <UnitTest name="TagToggleCommand: Execute + Undo 應可切換並還原標籤" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="34e775c0-e3a1-dfd3-eaf7-d021cdbdd331">
-      <Execution id="17ad7f5e-f1d6-480b-b458-edf63e42e7ba" />
+      <Execution id="58b875d4-32a9-4660-b846-16d0c18f7fdf" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="TagToggleCommand_ExecuteAndUndo_ShouldWork" />
     </UnitTest>
     <UnitTest name="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Size, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;c.png&quot;, &quot;b.txt&quot;])" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="bc6f98b5-80f5-ba59-7986-5516cb892959">
-      <Execution id="9a81ee82-6dd1-47bb-91e9-185fc4778db7" />
+      <Execution id="91a4bc08-794a-40d9-bf0c-ee373da4e3f0" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="SortCommand_ShouldSortAndUndo" />
     </UnitTest>
     <UnitTest name="SizeCalculator: Root/Sub 結構總容量應為 121.5KB" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="9b07c2c2-ac51-af37-9324-2fc413a1ec7c">
-      <Execution id="2362867c-5692-422a-8dc3-5f9d4b6c4a69" />
+      <Execution id="3c7b928a-a1f9-423b-98a4-534958b30b51" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.VisitorsTests" name="SizeCalculator_ShouldSumAllFileSizes" />
     </UnitTest>
     <UnitTest name="DeleteCommand: Execute 刪除，Undo 還原原位置" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="44d499f6-db42-7df6-1c07-7dd61e8b738d">
-      <Execution id="846ba90f-e9c8-4f4b-abb8-b7698a017bad" />
+      <Execution id="ebf35533-dd92-4d54-8dc3-60d118866f14" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="DeleteCommand_ShouldExecuteAndUndo" />
     </UnitTest>
     <UnitTest name="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Extension, asc: True, expectedOrder: [&quot;a.docx&quot;, &quot;c.png&quot;, &quot;b.txt&quot;])" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="4f511443-2d45-1216-3398-bf084c7894f9">
-      <Execution id="70ea5237-e374-49eb-ae87-5186acd2d424" />
+      <Execution id="05fd7cac-23f7-444e-b492-bdeaeb38c1ed" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="SortCommand_ShouldSortAndUndo" />
     </UnitTest>
     <UnitTest name="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Size, asc: False, expectedOrder: [&quot;b.txt&quot;, &quot;c.png&quot;, &quot;a.docx&quot;])" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="10fa1976-85f7-473d-e3c1-70bc09f4aacd">
-      <Execution id="92d9c0dc-e234-4caa-8182-43806baccbf7" />
+      <Execution id="6e8473e2-2827-4174-8c59-0a8c0a5892dd" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="SortCommand_ShouldSortAndUndo" />
     </UnitTest>
     <UnitTest name="Copy/Paste: 深拷貝後修改副本不影響原物件，且可貼上到目標資料夾" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="ca664d6a-a82c-3498-3748-ba315d33c736">
-      <Execution id="cd9288b0-2cea-4347-b04f-2120366ffeba" />
+      <Execution id="2daf410c-1228-454c-88d8-a26001638899" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CopyTests" name="Clone_AndPaste_ShouldBeDeepCopyAndIndependent" />
     </UnitTest>
     <UnitTest name="Redo: 撤銷後重做應重新套用上一個命令" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="49861855-1e14-aa94-cd07-92ff4314b753">
-      <Execution id="e3e491ea-2455-4743-bc17-d9b7fcb64d9d" />
+      <Execution id="190fe32f-09ea-424e-a7ad-3e6dc33d6a14" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="Redo_ShouldReapplyLastUndoneCommand" />
     </UnitTest>
     <UnitTest name="FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="dad94f22-a745-039e-5a8f-b20f65639e25">
-      <Execution id="d2556b89-783e-4a8c-b3de-e6185dc34366" />
+      <Execution id="18a6f5d6-c8cd-4a72-80c1-cd4175570f5f" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.VisitorsTests" name="FileSearcher_ShouldFindCaseInsensitiveExtension" />
     </UnitTest>
     <UnitTest name="SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Name, asc: False, expectedOrder: [&quot;c.png&quot;, &quot;b.txt&quot;, &quot;a.docx&quot;])" storage="/home/runner/work/webassembly-app/webassembly-app/webassembly app.tests/bin/release/net8.0/webassembly.app.tests.dll" id="525d7db0-126c-31c7-17c6-e536a1e55a73">
-      <Execution id="e4baa7de-1d92-43f5-ac53-d6ef1d79cb56" />
+      <Execution id="30999cd2-f73b-4fb1-aa66-5815c77ebc5b" />
       <TestMethod codeBase="/home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="WebAssembly_App.Tests.CommandTests" name="SortCommand_ShouldSortAndUndo" />
     </UnitTest>
   </TestDefinitions>
   <TestEntries>
-    <TestEntry testId="34e775c0-e3a1-dfd3-eaf7-d021cdbdd331" executionId="17ad7f5e-f1d6-480b-b458-edf63e42e7ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="49861855-1e14-aa94-cd07-92ff4314b753" executionId="e3e491ea-2455-4743-bc17-d9b7fcb64d9d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="ca664d6a-a82c-3498-3748-ba315d33c736" executionId="cd9288b0-2cea-4347-b04f-2120366ffeba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="525d7db0-126c-31c7-17c6-e536a1e55a73" executionId="e4baa7de-1d92-43f5-ac53-d6ef1d79cb56" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="8192fb1d-0972-44f4-e907-82be49f66815" executionId="9923224f-e332-49f3-8ff9-77d1b342f59c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="4f511443-2d45-1216-3398-bf084c7894f9" executionId="70ea5237-e374-49eb-ae87-5186acd2d424" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="8db53027-0c8c-38f4-d09e-e1905ea9d430" executionId="f93c089d-14a5-44e7-b4e9-b2c9b79d212c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="44d499f6-db42-7df6-1c07-7dd61e8b738d" executionId="846ba90f-e9c8-4f4b-abb8-b7698a017bad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="dad94f22-a745-039e-5a8f-b20f65639e25" executionId="d2556b89-783e-4a8c-b3de-e6185dc34366" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="9b07c2c2-ac51-af37-9324-2fc413a1ec7c" executionId="2362867c-5692-422a-8dc3-5f9d4b6c4a69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="bc6f98b5-80f5-ba59-7986-5516cb892959" executionId="9a81ee82-6dd1-47bb-91e9-185fc4778db7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="10fa1976-85f7-473d-e3c1-70bc09f4aacd" executionId="92d9c0dc-e234-4caa-8182-43806baccbf7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
-    <TestEntry testId="db1b93af-bb5a-786d-0f01-1b56eac768ff" executionId="6d41db71-f10f-4f55-ac05-11add887979a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="525d7db0-126c-31c7-17c6-e536a1e55a73" executionId="30999cd2-f73b-4fb1-aa66-5815c77ebc5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8192fb1d-0972-44f4-e907-82be49f66815" executionId="20a70851-0214-4f52-b62d-a8cb0da00d6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34e775c0-e3a1-dfd3-eaf7-d021cdbdd331" executionId="58b875d4-32a9-4660-b846-16d0c18f7fdf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8db53027-0c8c-38f4-d09e-e1905ea9d430" executionId="dec6b91d-d6ed-4195-b33a-839dec346211" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b07c2c2-ac51-af37-9324-2fc413a1ec7c" executionId="3c7b928a-a1f9-423b-98a4-534958b30b51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44d499f6-db42-7df6-1c07-7dd61e8b738d" executionId="ebf35533-dd92-4d54-8dc3-60d118866f14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db1b93af-bb5a-786d-0f01-1b56eac768ff" executionId="e649bb66-5f08-4e57-a168-bd86fa6fe7b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dad94f22-a745-039e-5a8f-b20f65639e25" executionId="18a6f5d6-c8cd-4a72-80c1-cd4175570f5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4f511443-2d45-1216-3398-bf084c7894f9" executionId="05fd7cac-23f7-444e-b492-bdeaeb38c1ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc6f98b5-80f5-ba59-7986-5516cb892959" executionId="91a4bc08-794a-40d9-bf0c-ee373da4e3f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49861855-1e14-aa94-cd07-92ff4314b753" executionId="190fe32f-09ea-424e-a7ad-3e6dc33d6a14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10fa1976-85f7-473d-e3c1-70bc09f4aacd" executionId="6e8473e2-2827-4174-8c59-0a8c0a5892dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca664d6a-a82c-3498-3748-ba315d33c736" executionId="2daf410c-1228-454c-88d8-a26001638899" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
   </TestEntries>
   <TestLists>
     <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
@@ -284,10 +284,10 @@ Visiting: Root -&gt; Sub -&gt; c.png
     <Counters total="13" executed="13" passed="13" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
     <Output>
       <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.24)
-[xUnit.net 00:00:00.24]   Discovering: WebAssembly.App.Tests
-[xUnit.net 00:00:00.43]   Discovered:  WebAssembly.App.Tests
-[xUnit.net 00:00:00.43]   Starting:    WebAssembly.App.Tests
-[xUnit.net 00:00:00.55]   Finished:    WebAssembly.App.Tests
+[xUnit.net 00:00:00.16]   Discovering: WebAssembly.App.Tests
+[xUnit.net 00:00:00.34]   Discovered:  WebAssembly.App.Tests
+[xUnit.net 00:00:00.35]   Starting:    WebAssembly.App.Tests
+[xUnit.net 00:00:00.47]   Finished:    WebAssembly.App.Tests
 </StdOut>
     </Output>
     <CollectorDataEntries>

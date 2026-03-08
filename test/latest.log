@@ -1,5 +1,5 @@
   Determining projects to restore...
-  Restored /home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/WebAssembly App.Tests.csproj (in 1.38 sec).
+  Restored /home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/WebAssembly App.Tests.csproj (in 1.23 sec).
   1 of 2 projects are up-to-date for restore.
   WebAssembly App -> /home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App/bin/Release/net8.0/WebAssembly App.dll
   WebAssembly App (Blazor output) -> /home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App/bin/Release/net8.0/wwwroot
@@ -11,9 +11,9 @@ Starting test execution, please wait...
 A total of 1 test files matched the specified pattern.
 /home/runner/work/WebAssembly-App/WebAssembly-App/WebAssembly App.Tests/bin/Release/net8.0/WebAssembly.App.Tests.dll
 [xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.24)
-[xUnit.net 00:00:00.24]   Discovering: WebAssembly.App.Tests
-[xUnit.net 00:00:00.43]   Discovered:  WebAssembly.App.Tests
-[xUnit.net 00:00:00.43]   Starting:    WebAssembly.App.Tests
+[xUnit.net 00:00:00.16]   Discovering: WebAssembly.App.Tests
+[xUnit.net 00:00:00.34]   Discovered:  WebAssembly.App.Tests
+[xUnit.net 00:00:00.35]   Starting:    WebAssembly.App.Tests
   Passed Copy/Paste: 深拷貝後修改副本不影響原物件，且可貼上到目標資料夾 [15 ms]
   Standard Output Messages:
  === 原始 Source ===
@@ -29,7 +29,19 @@ A total of 1 test files matched the specified pattern.
  - File: a.txt (1KB)
 
 
-  Passed FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序 [18 ms]
+  Passed DeleteCommand: Execute 刪除，Undo 還原原位置 [17 ms]
+  Standard Output Messages:
+ === 刪除前結構 ===
+ 1. a.txt | 1KB
+ 2. b.txt | 2KB
+ === 刪除後結構 ===
+ 1. b.txt | 2KB
+ === Undo 還原後結構 ===
+ 1. a.txt | 1KB
+ 2. b.txt | 2KB
+
+
+  Passed FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序 [17 ms]
   Standard Output Messages:
  === 搜尋前所有文件 ===
  Root/Spec.DOCX | 10KB
@@ -45,18 +57,6 @@ A total of 1 test files matched the specified pattern.
  === 搜尋結果 ===
  Root/Spec.DOCX
  Root/Note.docx
-
-
-  Passed DeleteCommand: Execute 刪除，Undo 還原原位置 [18 ms]
-  Standard Output Messages:
- === 刪除前結構 ===
- 1. a.txt | 1KB
- 2. b.txt | 2KB
- === 刪除後結構 ===
- 1. b.txt | 2KB
- === Undo 還原後結構 ===
- 1. a.txt | 1KB
- 2. b.txt | 2KB
 
 
   Passed SizeCalculator: Root/Sub 結構總容量應為 121.5KB [2 ms]
@@ -134,7 +134,7 @@ A total of 1 test files matched the specified pattern.
  3. c.png | 15KB
 
 
-[xUnit.net 00:00:00.55]   Finished:    WebAssembly.App.Tests
+[xUnit.net 00:00:00.47]   Finished:    WebAssembly.App.Tests
   Passed SortCommand: 各排序條件與方向都應正確，且 Undo 可還原(key: Name, asc: True, expectedOrder: ["a.docx", "b.txt", "c.png"]) [< 1 ms]
   Standard Output Messages:
  === 原始排序 [Name, ASC] ===
@@ -197,7 +197,7 @@ A total of 1 test files matched the specified pattern.
  2. b.txt | 2KB
 
 
-  Passed XML匯出: 顯示資料夾結構與輸出XML [55 ms]
+  Passed XML匯出: 顯示資料夾結構與輸出XML [52 ms]
   Standard Output Messages:
  === 資料夾結構 ===
  [Folder] 根目錄_Root
@@ -221,7 +221,7 @@ Results File: /home/runner/work/WebAssembly-App/WebAssembly-App/TestResults/test
 Test Run Successful.
 Total tests: 13
      Passed: 13
- Total time: 4.5017 Seconds
+ Total time: 3.8988 Seconds
 
 Attachments:
-  /home/runner/work/WebAssembly-App/WebAssembly-App/TestResults/728bb5d4-d33e-4a7b-abdf-780b24d75eb5/coverage.cobertura.xml
+  /home/runner/work/WebAssembly-App/WebAssembly-App/TestResults/dff72ec7-0001-4b5e-a4b2-3e93b9d3499f/coverage.cobertura.xml
