@@ -52,11 +52,21 @@ jobs:
             TestResults/**/*.trx
             TestResults/test-console.log
 
+      - name: Debug test result files
+        if: always()
+        shell: bash
+        run: |
+          echo "=== pwd ==="
+          pwd
+          echo "=== find trx ==="
+          find . -type f -name "*.trx" -print || true
+          echo "=== list TestResults ==="
+          ls -R TestResults || true
+
       - name: Publish test report
         if: always()
-        continue-on-error: true
         uses: dorny/test-reporter@v1
         with:
           name: Unit Test Report
-          path: "TestResults/**/*.trx"
+          path: "**/test-results.trx"
           reporter: dotnet-trx
