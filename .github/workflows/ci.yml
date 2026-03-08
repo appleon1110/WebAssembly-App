@@ -71,7 +71,4 @@ jobs:
           path: "**/test-results.trx"
           reporter: dotnet-trx
           list-suites: all
-          list-tests: all
-          only-summary: false
-          max-annotations: 50
-          fail-on-error: true
+          
