@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p TestResults
-          dotent test "WebAssembly App.Tests/WebAssembly App.Tests.csproj" \
+          dotnet test "WebAssembly App.Tests/WebAssembly App.Tests.csproj" \
             --configuration Release \
             --collect:"XPlat Code Coverage" \
             --results-directory "TestResults" \
