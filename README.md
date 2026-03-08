@@ -93,20 +93,29 @@
 - `排序`：對目前資料夾進行排序
 - `Tag`：切換標籤
 
+### 5.1 Home 工具列 RWD（本次更新）
+
+針對 `Pages/Home.razor` 的上方工具列，已新增手機版（`max-width: 576px`）排版優化：
+
+- 手機版固定為四行顯示（每種類型功能一行）：
+  1. `重做 / 撤銷`
+  2. `複製 / 貼上 / 刪除`
+  3. `排序`
+  4. `標籤`
+- 排序區前新增功能符號（`↕️`）。
+- 手機版**保留功能符號顯示**（避免看不出功能）。
+- 手機版僅隱藏工具列分隔線（`toolbar-divider`），不隱藏功能符號。
+- 手機版關閉桌面按鈕拼接效果，避免換行時邊框與圓角破版。
+
+相關檔案：
+- `Pages/Home.razor`
+- `Pages/Home.razor.css`
+
 ---
 
-## 6. 作業要求對照（Traverse Log）
 
-需求：執行「計算大小」或「搜尋」時，Console 顯示訪問節點順序。  
-本專案已實作，輸出範例：
 
-`Visiting: Root -> Project_Docs -> 需求規格書.docx`
-
-並搭配右側監控面板顯示目前節點與進度。
-
----
-
-## 7. 執行環境
+## 6. 執行環境
 
 - .NET 8
 - Blazor WebAssembly
@@ -114,7 +123,7 @@
 
 ---
 
-## ✅ Automated Testing
+## 7. Automated Testing
 
 本專案已加入 `xUnit` 單元測試，並透過 GitHub Actions 自動執行。
 

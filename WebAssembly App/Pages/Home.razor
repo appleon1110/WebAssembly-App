@@ -26,8 +26,9 @@
                     </div>
 
                     <div class="toolbar-divider" aria-hidden="true"></div>
-                    📃
+
                     <div class="btn-group" role="group" aria-label="clipboard">
+                        <span class="toolbar-emoji" aria-hidden="true">📃</span>
                         <button class="btn btn-sm btn-outline-primary" @onclick="Copy" title="複製">
                             @((MarkupString)IconLibrary.Copy) 複製
                         </button>
@@ -42,7 +43,7 @@
                     <div class="toolbar-divider" aria-hidden="true"></div>
 
                     <div class="btn-group" role="group" aria-label="sort">
-                        <!-- 名稱按鈕 -->
+                        <span class="toolbar-emoji" aria-hidden="true">↕️</span>
                         <button class="btn btn-sm @(IsActiveSort(SortKey.Name) ? "btn-primary text-white" : "btn-outline-secondary")"
                                 @onclick="() => SortSelected(SortKey.Name, !IsActiveSort(SortKey.Name) ? true : !IsActiveSortAsc())">
                             @if (IsActiveSort(SortKey.Name))
@@ -52,7 +53,6 @@
                             名稱
                         </button>
 
-                        <!-- 大小按鈕 -->
                         <button class="btn btn-sm @(IsActiveSort(SortKey.Size) ? "btn-primary text-white" : "btn-outline-secondary")"
                                 @onclick="() => SortSelected(SortKey.Size, !IsActiveSort(SortKey.Size) ? true : !IsActiveSortAsc())">
                             @if (IsActiveSort(SortKey.Size))
@@ -62,7 +62,6 @@
                             大小
                         </button>
 
-                        <!-- 類型按鈕 -->
                         <button class="btn btn-sm @(IsActiveSort(SortKey.Extension) ? "btn-primary text-white" : "btn-outline-secondary")"
                                 @onclick="() => SortSelected(SortKey.Extension, !IsActiveSort(SortKey.Extension) ? true : !IsActiveSortAsc())">
                             @if (IsActiveSort(SortKey.Extension))
@@ -73,9 +72,8 @@
                         </button>
                     </div>
 
-                    
                     <div class="btn-group ms-2" role="group" aria-label="tags">
-                        🏷️
+                        <span class="toolbar-emoji" aria-hidden="true">🏷️</span>
                         <button class="btn btn-sm btn-outline-danger" @onclick='() => ToggleTagOnSelected("Urgent")' disabled="@(selectedItem == null)">
                             @((MarkupString)IconLibrary.Label) Urgent
                             <span class="badge bg-danger ms-2">@CountTag("Urgent")</span>
