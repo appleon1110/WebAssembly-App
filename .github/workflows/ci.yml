@@ -11,8 +11,6 @@ permissions:
   contents: write
   checks: write
   pull-requests: write
-  pages: write
-  id-token: write
 
 jobs:
   build-and-test:
@@ -95,39 +93,3 @@ jobs:
           git add test
           git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "chore: update public test report [skip ci]" || echo "No changes"
           git push origin reports --force
-
-      - name: Prepare Pages files
-        if: always() && github.ref == 'refs/heads/master'
-        shell: bash
-        run: |
-          mkdir -p pages/test
-          cp -f TestResults/test-console.log pages/test/latest.log
-          cp -f TestResults/test-results.trx pages/test/latest.trx
-          cat > pages/index.html << 'EOF'
-          <!doctype html>
-          <html>
-          <body>
-            <h1>Test Reports</h1>
-            <ul>
-              <li><a href="./test/latest.log">latest.log</a></li>
-              <li><a href="./test/latest.trx">latest.trx</a></li>
-            </ul>
-          </body>
-          </html>
-          EOF
-
-      - name: Upload Pages artifact
-        if: always() && github.ref == 'refs/heads/master'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: pages
-
-  deploy-pages:
-    if: github.ref == 'refs/heads/master'
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-    steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
