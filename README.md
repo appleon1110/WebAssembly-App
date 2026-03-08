@@ -8,12 +8,13 @@
 - 🌐 **Web Demo**：<https://appleon1110.github.io/WebAssembly-App/>
 - ✅ **CI / Automated Tests**：<https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml>
 [![CI](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml/badge.svg)](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml)
+- Unit Test Report: https://github.com/appleon1110/WebAssembly-App/actions/runs/22819111252/job/66189013745
 - Latest test console log: https://raw.githubusercontent.com/appleon1110/WebAssembly-App/reports/test/latest.log
 - Latest test TRX: https://raw.githubusercontent.com/appleon1110/WebAssembly-App/reports/test/latest.trx
   
-| Web 展示 | 自動化測試 |
-|---|---|
-| <img width="1747" height="825" alt="image" src="https://github.com/user-attachments/assets/5b0248bc-5f68-4e33-984f-803918df7da5" />|<img width="1026" height="999" alt="image" src="https://github.com/user-attachments/assets/50549e5a-c66a-45ab-ba59-b50517da2e37" />|
+| Web 展示 | 自動化測試 | RWD 手機版本 |
+| :---: | :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/ed62acc2-7aec-40f3-8854-33b83d24efb3" width="100%" /> | <img src="https://github.com/user-attachments/assets/50549e5a-c66a-45ab-ba59-b50517da2e37" width="100%" /> | <img src="https://github.com/user-attachments/assets/dd3ec27b-a3d4-45fe-be7f-a4eac846ca4c" width="100%" /> |
 
 重點示範：
 
@@ -93,7 +94,7 @@
 - `排序`：對目前資料夾進行排序
 - `Tag`：切換標籤
 
-### 5.1 Home 工具列 RWD（本次更新）
+### 5.1 Home 工具列 RWD
 
 針對 `Pages/Home.razor` 的上方工具列，已新增手機版（`max-width: 576px`）排版優化：
 
