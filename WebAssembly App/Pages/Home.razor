@@ -4,7 +4,6 @@
 @using System.Net
 @using Microsoft.AspNetCore.Components
 @using System.Linq
-@using System.IO
 
 <PageTitle>檔案管理系統</PageTitle>
 
@@ -354,7 +353,7 @@
     private void Copy()
     {
         if (selectedItem == null) return;
-        clipboardItem = CloneItem(selectedItem);
+        clipboardItem = FileSystemCloner.Clone(selectedItem);
     }
 
     private void Paste()
@@ -363,7 +362,7 @@
         var targetFolder = selectedItem as Folder ?? FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
         if (targetFolder == null) return;
 
-        var clone = CloneItem(clipboardItem);
+        var clone = FileSystemCloner.Clone(clipboardItem);
         var cmd = new AddCommand(targetFolder, clone);
         ExecuteCommand(cmd);
     }
@@ -479,137 +478,9 @@
         return null;
     }
 
-    private FileSystemItem CloneItem(FileSystemItem src)
-    {
-        if (src is Folder f)
-        {
-            var nf = new Folder { Name = f.Name, SizeKB = f.SizeKB, CreatedDate = f.CreatedDate };
-            nf.Tags = new List<string>(f.Tags ?? new());
-            foreach (var c in f.Children) nf.Children.Add(CloneItem(c));
-            return nf;
-        }
-        else if (src is WordFile w)
-        {
-            return new WordFile { Name = w.Name, SizeKB = w.SizeKB, CreatedDate = w.CreatedDate, PageCount = w.PageCount, Tags = new List<string>(w.Tags ?? new()) };
-        }
-        else if (src is ImageFile i)
-        {
-            return new ImageFile { Name = i.Name, SizeKB = i.SizeKB, CreatedDate = i.CreatedDate, Width = i.Width, Height = i.Height, Tags = new List<string>(i.Tags ?? new()) };
-        }
-        else if (src is TextFile t)
-        {
-            return new TextFile { Name = t.Name, SizeKB = t.SizeKB, CreatedDate = t.CreatedDate, Encoding = t.Encoding, Tags = new List<string>(t.Tags ?? new()) };
-        }
-        else
-        {
-            return new TextFile { Name = src.Name, SizeKB = src.SizeKB, CreatedDate = src.CreatedDate, Tags = new List<string>(src.Tags ?? new()) };
-        }
-    }
+    
 
-    private interface ICommand
-    {
-        void Execute();
-        void Undo();
-    }
-
-    private class AddCommand : ICommand
-    {
-        private Folder _parent;
-        private FileSystemItem _item;
-        public AddCommand(Folder parent, FileSystemItem item) { _parent = parent; _item = item; }
-        public void Execute() { _parent.Children.Add(_item); }
-        public void Undo() { _parent.Children.Remove(_item); }
-    }
-
-    private class DeleteCommand : ICommand
-    {
-        private Folder _parent;
-        private FileSystemItem _item;
-        private int _index;
-        public DeleteCommand(Folder parent, FileSystemItem item, int index) { _parent = parent; _item = item; _index = index; }
-        public void Execute() { if (_index <= _parent.Children.Count - 1) _parent.Children.RemoveAt(_index); else _parent.Children.Remove(_item); }
-        public void Undo() { if (_index <= _parent.Children.Count) _parent.Children.Insert(_index, _item); else _parent.Children.Add(_item); }
-    }
-
-    private class TagToggleCommand : ICommand
-    {
-        private FileSystemItem _item;
-        private string _tag;
-        private bool _wasPresent;
-        public TagToggleCommand(FileSystemItem item, string tag) { _item = item; _tag = tag; _wasPresent = item.Tags?.Contains(tag) == true; }
-        public void Execute()
-        {
-            if (_item.Tags == null) _item.Tags = new List<string>();
-            if (_wasPresent) _item.Tags.Remove(_tag);
-            else if (!_item.Tags.Contains(_tag)) _item.Tags.Add(_tag);
-        }
-        public void Undo()
-        {
-            if (_item.Tags == null) _item.Tags = new List<string>();
-            if (_wasPresent)
-            {
-                if (!_item.Tags.Contains(_tag)) _item.Tags.Add(_tag);
-            }
-            else
-            {
-                _item.Tags.Remove(_tag);
-            }
-        }
-    }
-
-    private class SortCommand : ICommand
-    {
-        private Folder _folder;
-        private List<FileSystemItem> _oldOrder;
-        private SortKey _key;
-        private bool _asc;
         
-        // 用於 Undo 恢復原本的排序狀態標示
-        private SortKey _oldSortKey;
-        private bool _oldSortAsc;
-
-        public SortCommand(Folder folder, SortKey key, bool asc, List<FileSystemItem> oldOrder)
-        {
-            _folder = folder; 
-            _key = key; 
-            _asc = asc; 
-            _oldOrder = new List<FileSystemItem>(oldOrder);
-            
-            _oldSortKey = folder.CurrentSortKey;
-            _oldSortAsc = folder.IsSortAscending;
-        }
-
-        public void Execute()
-        {
-            IEnumerable<FileSystemItem> sorted = _folder.Children;
-            switch (_key)
-            {
-                case SortKey.Name:
-                    sorted = _asc ? _folder.Children.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase) : _folder.Children.OrderByDescending(c => c.Name, StringComparer.OrdinalIgnoreCase);
-                    break;
-                case SortKey.Size:
-                    sorted = _asc ? _folder.Children.OrderBy(c => c.SizeKB) : _folder.Children.OrderByDescending(c => c.SizeKB);
-                    break;
-                case SortKey.Extension:
-                    sorted = _asc ? _folder.Children.OrderBy(c => Path.GetExtension(c.Name)) : _folder.Children.OrderByDescending(c => Path.GetExtension(c.Name));
-                    break;
-            }
-            _folder.Children = sorted.ToList();
-
-            // 記下現在的狀態
-            _folder.CurrentSortKey = _key;
-            _folder.IsSortAscending = _asc;
-        }
-
-        public void Undo()
-        {
-            _folder.Children = new List<FileSystemItem>(_oldOrder);
-            
-            // 恢復之前的狀態
-            _folder.CurrentSortKey = _oldSortKey;
-            _folder.IsSortAscending = _oldSortAsc;
-        }
-    }
 
     private void PrepareObserver(List<(string Message, bool IsMatch)> entries)
     {
