@@ -3,6 +3,7 @@
 本專案以 `Blazor WebAssembly` 實作，主題為「雲端檔案管理系統」。
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-2ea44f?style=for-the-badge&logo=github)](https://appleon1110.github.io/WebAssembly-App/)
+[![CI](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml/badge.svg)](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml)
 
 👉 線上展示：<https://appleon1110.github.io/WebAssembly-App/>
 
@@ -13,6 +14,7 @@
 - 操作命令與回復（Command / Undo / Redo）
 - 監控日誌與進度顯示（Traverse Log + Observer UI）
 - 自訂 XML 匯出
+- 自動化測試（xUnit + GitHub Actions）
 
 ---
 
@@ -40,7 +42,8 @@
 每造訪節點都產生 `Visiting: ...` 日誌，用於證明遍歷順序。
 
 ### 2.3 Command（可回復操作）
-新增、刪除、標籤切換、排序都封裝為 Command，支援 Undo / Redo。
+新增、刪除、標籤切換、排序都封裝為 Command，支援 Undo / Redo。  
+命令已抽離至 `Models/Commands.cs`，便於單元測試。
 
 ---
 
@@ -64,9 +67,12 @@
 - `Models/FileSystem.cs`：模型與 `SortKey`
 - `Models/Visitors.cs`：`SizeCalculator` / `FileSearcher`
 - `Models/FileSystemXmlSerializer.cs`：自訂 XML 序列化
+- `Models/Commands.cs`：`Add/Delete/TagToggle/Sort` 命令
+- `Models/FileSystemCloner.cs`：深拷貝（Copy/Paste）
 - `Shared/FileNode.razor`：遞迴目錄 UI
 - `Pages/Home.razor`：主頁面、命令管理、監控 UI、Console 顯示
 - `Pages/Home.razor.css`：頁面樣式與比例配置
+- `WebAssembly App.Tests/*`：自動化測試
 
 ---
 
@@ -102,21 +108,16 @@
 
 ## ✅ Automated Testing
 
-[![CI](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml/badge.svg)](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml)
-
 本專案已加入 `xUnit` 單元測試，並透過 GitHub Actions 自動執行。
 
 ### 測試涵蓋內容
 
-- `SizeCalculator`：驗證樹狀結構總容量計算（案例：`121.5KB`）
-- `FileSearcher`：驗證副檔名搜尋與結果順序（案例：`.docx`）
+- `SizeCalculator`：列出所有文件與大小，驗證總容量（`121.5KB`）
+- `FileSearcher`：先列出所有文件，再列出搜尋命中結果與順序
 - `FileSystemXmlSerializer`：驗證 XML 根節點與檔案節點輸出格式
-
-### 目前測試案例
-
-- `SizeCalculator: Root/Sub 結構總容量應為 121.5KB`
-- `FileSearcher: 搜尋 .docx 應找到 2 筆且保留遍歷順序`
-- `SerializeCustom_SingleRootFolder_ShouldUseFolderNameAsRootElement`
+- `Copy/Paste`：驗證深拷貝、貼上後與原物件狀態獨立
+- `DeleteCommand`：顯示刪除前 / 刪除後 / Undo 還原後結構
+- `SortCommand`：顯示原始排序與排序後結果（含 `SizeKB`），並驗證 Undo 還原
 
 ### CI 會做什麼（`.github/workflows/ci.yml`）
 
@@ -133,3 +134,4 @@
 - GitHub：`Actions` → 選擇 `CI` workflow → 查看 `Test (detailed)` step
 - PR：查看 `Unit Test Report`
 - Artifact：下載 `test-results.trx` 檢視完整測試紀錄
+
