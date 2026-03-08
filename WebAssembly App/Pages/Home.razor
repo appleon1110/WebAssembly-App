@@ -336,7 +336,7 @@
         {
             consoleOutput = "";
             var xml = FileSystemXmlSerializer.SerializeCustom(rootItems);
-            var encodedXml = WebUtility.HtmlEncode("[XML 匯出]\n" + xml);
+            var encodedXml = WebUtility.HtmlEncode(xml);
             var htmlBlock = $"<div><pre>{encodedXml}</pre></div>";
             if (string.IsNullOrWhiteSpace(consoleOutput) || consoleOutput == "執行結果將顯示於此...") consoleOutput = htmlBlock;
             else consoleOutput += htmlBlock;
