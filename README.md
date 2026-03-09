@@ -8,7 +8,7 @@
 - 🌐 **Web Demo**：<https://appleon1110.github.io/WebAssembly-App/>
 - ✅ **CI / Automated Tests**：<https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml>
 [![CI](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml/badge.svg)](https://github.com/appleon1110/WebAssembly-App/actions/workflows/ci.yml)
-- Unit Test Report: https://github.com/appleon1110/WebAssembly-App/actions/runs/22819111252/job/66189013745
+- Unit Test Report: [https://github.com/appleon1110/WebAssembly-App/actions/runs/22819111252/job/66189013745](https://github.com/appleon1110/WebAssembly-App/actions/runs/22862845936/job/66321566412)
 - Latest test console log: https://raw.githubusercontent.com/appleon1110/WebAssembly-App/reports/test/latest.log
 - Latest test TRX: https://raw.githubusercontent.com/appleon1110/WebAssembly-App/reports/test/latest.trx
   
