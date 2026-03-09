@@ -48,18 +48,20 @@
 
 ### 2.2 Visitor（遍歷）
 `SizeCalculator` 與 `FileSearcher` 透過 `Accept/Visit` 遍歷。  
-每造訪節點都產生 `Visiting: ...` 日誌，用於證明遍歷順序。
+每造訪節點會依節點類型輸出日誌：
 
-### 2.3 Command（可回復操作）
-新增、刪除、標籤切換、排序都封裝為 Command，支援 Undo / Redo。  
-命令已抽離至 `Models/Commands.cs`，便於單元測試。  
-資料夾節點（`Folder`）會保存 `CurrentSortKey` 與 `IsSortAscending`，因此切換資料夾後回來仍保留該資料夾排序狀態。
+- `搜尋目錄: ...`（Folder）
+- `掃描檔案: ...`（File）
+
+搜尋命中時另外輸出：
+
+- `[符合] 路徑`
 
 ---
 
 ## 3. 監控（Observer-like UI）如何達成
 
-在 `Home.razor` 中，執行搜尋/計算時會：
+在 `Home.razor` / `Home.razor.cs` 中，執行搜尋/計算時會：
 
 1. 建立 log entries（來自 Visitor callback）
 2. 計算總節點數（`PrepareObserver`）
@@ -118,7 +120,7 @@
 針對 `Pages/Home.razor` 與 `Shared/FileNode.razor`，已補強遍歷時的 UI 同步行為：
 
 - `計算總大小`：
-  - 依 `Visiting:` 日誌逐筆移動焦點（動畫感）
+  - 依掃描日誌逐筆移動焦點（動畫感）
   - 會自動展開祖先資料夾
 
 - `副檔名搜尋`：
@@ -134,14 +136,22 @@
   - 每次執行前重建 lookup（`BuildReplayLookup()`）
   - 避免 queue 被前一次 `Dequeue()` 用盡
 
-相關檔案：
-- `Pages/Home.razor`
-- `Shared/FileNode.razor`
-- `Models/Visitors.cs`
-
 ---
 
+### 5.3 Console 操作紀錄（Command / Undo / Redo）
 
+右側 Console 會持續追加操作紀錄（不覆蓋舊內容），包含：
+
+- `[Command]執行 ...`
+  - 複製項目、貼上項目、刪除項目
+  - 貼上標籤 / 移除標籤
+  - 名稱 / 大小 / 類型 排序（遞增 / 遞減）
+- `[Undo]恢復 ...`
+- `[Redo]重做 ...`
+
+Console 區塊支援固定高度滾動，便於追蹤操作歷程。
+
+---
 
 ## 6. 執行環境
 

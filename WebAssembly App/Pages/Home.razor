@@ -114,14 +114,15 @@
                     <h5>系統操作</h5>
                     @* 按鈕改成執行中禁用，避免重複觸發 *@
                     <button class="btn btn-outline-primary w-100 mb-2" @onclick="RunSizeCalc" disabled="@_isTraversing">⚡ 計算總大小</button>
+
+                    <div class="d-grid mb-2">
+                        <button class="btn btn-outline-success" @onclick="RunExportXml" disabled="@_isTraversing">📄 匯出 XML</button>
+                    </div>
                     <div class="input-group mb-2">
                         <input type="text" class="form-control" placeholder=".docx" @bind="searchExt" />
                         <button class="btn btn-outline-secondary" @onclick="RunSearch" disabled="@_isTraversing">🔍 副檔名搜尋</button>
                     </div>
 
-                    <div class="d-grid mb-2">
-                        <button class="btn btn-outline-success" @onclick="RunExportXml" disabled="@_isTraversing">📄 匯出 XML</button>
-                    </div>
 
                     @* 小型監控視窗：放在 Console 前面 *@
                     <div class="p-2 bg-light rounded border mb-2" style="font-size: 0.9rem;">

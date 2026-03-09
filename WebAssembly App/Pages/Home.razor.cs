@@ -23,6 +23,9 @@ public partial class Home
     private Stack<ICommand> _undo = new();
     private Stack<ICommand> _redo = new();
 
+    private readonly Stack<string> _undoActionLabels = new();
+    private readonly Stack<string> _redoActionLabels = new();
+
     // 新增：逐筆輸出控制
     private bool _isTraversing = false;
     private const int TraverseLogDelayMs = 120;
@@ -190,11 +193,31 @@ public partial class Home
         }
     }
 
+    private static bool TryExtractTraversalPath(string message, out string path)
+    {
+        path = string.Empty;
+
+        const string folderPrefix = "搜尋目錄:";
+        const string filePrefix = "掃描檔案:";
+
+        if (message.StartsWith(folderPrefix, StringComparison.Ordinal))
+        {
+            path = message[folderPrefix.Length..].Trim();
+            return !string.IsNullOrWhiteSpace(path);
+        }
+
+        if (message.StartsWith(filePrefix, StringComparison.Ordinal))
+        {
+            path = message[filePrefix.Length..].Trim();
+            return !string.IsNullOrWhiteSpace(path);
+        }
+
+        return false;
+    }
+
     private void ApplyTraversalFocusFromMessage(string message)
     {
-        if (!message.StartsWith("Visiting:", StringComparison.Ordinal)) return;
-
-        var path = message["Visiting:".Length..].Trim();
+        if (!TryExtractTraversalPath(message, out var path)) return;
         if (!_visitingLookup.TryGetValue(path, out var q) || q.Count == 0) return;
 
         var item = q.Dequeue();
@@ -268,53 +291,104 @@ public partial class Home
 
     private void Copy()
     {
-        if (selectedItem == null) return;
+        if (selectedItem == null)
+        {
+            LogCommand("複製失敗(未選取)");
+            return;
+        }
+
         clipboardItem = FileSystemCloner.Clone(selectedItem);
+        LogCommand($"複製項目({selectedItem.Name})");
     }
 
     private void Paste()
     {
-        if (clipboardItem == null) return;
+        if (clipboardItem == null)
+        {
+            LogCommand("貼上失敗(剪貼簿為空)");
+            return;
+        }
+
         var targetFolder = selectedItem as Folder ?? FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
-        if (targetFolder == null) return;
+        if (targetFolder == null)
+        {
+            LogCommand("貼上失敗(找不到目標資料夾)");
+            return;
+        }
 
         var clone = FileSystemCloner.Clone(clipboardItem);
         var cmd = new AddCommand(targetFolder, clone);
-        ExecuteCommand(cmd);
+
+        var actionLabel = $"貼上項目({clone.Name})";
+        ExecuteCommand(cmd, actionLabel);
+        LogCommand(actionLabel);
     }
 
     private void DeleteSelected()
     {
-        if (selectedItem == null) return;
+        if (selectedItem == null)
+        {
+            LogCommand("刪除失敗(未選取)");
+            return;
+        }
+
         var parent = FindParentFolder(selectedItem);
-        if (parent == null) return;
+        if (parent == null)
+        {
+            LogCommand("刪除失敗(找不到父層)");
+            return;
+        }
+
         var index = parent.Children.IndexOf(selectedItem);
-        if (index < 0) return;
+        if (index < 0)
+        {
+            LogCommand("刪除失敗(索引不存在)");
+            return;
+        }
+
+        var deletingName = selectedItem.Name;
         var cmd = new DeleteCommand(parent, selectedItem, index);
-        ExecuteCommand(cmd);
+        ExecuteCommand(cmd, "刪除項目");
         selectedItem = null;
+
+        LogCommand($"刪除項目({deletingName})");
     }
 
     private void ToggleTagOnSelected(string tag)
     {
-        if (selectedItem == null) return;
+        if (selectedItem == null)
+        {
+            LogCommand($"標籤操作失敗({tag})");
+            return;
+        }
+
+        var hadTag = selectedItem.Tags?.Contains(tag) == true;
+        var actionLabel = hadTag ? $"移除標籤({tag})" : $"貼上標籤({tag})";
+
         var cmd = new TagToggleCommand(selectedItem, tag);
-        ExecuteCommand(cmd);
+        ExecuteCommand(cmd, actionLabel);
+        LogCommand(actionLabel);
     }
 
     private void SortSelected(SortKey key, bool ascending)
     {
         Folder? folder = selectedItem as Folder;
         if (folder == null) folder = FindParentFolder(selectedItem) ?? rootItems.OfType<Folder>().FirstOrDefault();
-        if (folder == null) return;
-
-        // 這兩行要刪除！否則 Command 備份到的 old state 會是錯的
-        // folder.CurrentSortKey = key;
-        // folder.IsSortAscending = ascending;
+        if (folder == null)
+        {
+            LogCommand("排序失敗(找不到資料夾)");
+            return;
+        }
 
         var oldOrder = folder.Children.ToList();
         var cmd = new SortCommand(folder, key, ascending, oldOrder);
-        ExecuteCommand(cmd);
+
+        var sortText = ToSortText(key);
+        var directionText = ascending ? "遞增" : "遞減";
+        var actionLabel = $"{sortText} 排序{directionText}";
+
+        ExecuteCommand(cmd, actionLabel);
+        LogCommand(actionLabel);
     }
 
     // 計算系統中標籤數量（給工具列上的徽章）
@@ -341,29 +415,45 @@ public partial class Home
         }
     }
 
-    private void ExecuteCommand(ICommand cmd)
+    private void ExecuteCommand(ICommand cmd, string actionLabel)
     {
         cmd.Execute();
         _undo.Push(cmd);
         _redo.Clear();
+
+        _undoActionLabels.Push(actionLabel);
+        _redoActionLabels.Clear();
+
         StateHasChanged();
     }
 
     private void Undo()
     {
         if (!_undo.Any()) return;
+
         var cmd = _undo.Pop();
         cmd.Undo();
         _redo.Push(cmd);
+
+        var actionLabel = _undoActionLabels.Count > 0 ? _undoActionLabels.Pop() : "操作";
+        _redoActionLabels.Push(actionLabel);
+
+        LogUndo(actionLabel);
         StateHasChanged();
     }
 
     private void Redo()
     {
         if (!_redo.Any()) return;
+
         var cmd = _redo.Pop();
         cmd.Execute();
         _undo.Push(cmd);
+
+        var actionLabel = _redoActionLabels.Count > 0 ? _redoActionLabels.Pop() : "操作";
+        _undoActionLabels.Push(actionLabel);
+
+        LogRedo(actionLabel);
         StateHasChanged();
     }
 
@@ -396,25 +486,24 @@ public partial class Home
     private void PrepareObserver(List<(string Message, bool IsMatch)> entries)
     {
         _visitedNodes = 0;
-        _totalNodes = entries.Count(e => e.Message.StartsWith("Visiting:", StringComparison.Ordinal));
+        _totalNodes = entries.Count(e => TryExtractTraversalPath(e.Message, out _));
         _currentNode = "-";
     }
 
     private void UpdateObserverFromMessage(string message)
     {
-        if (!message.StartsWith("Visiting:", StringComparison.Ordinal)) return;
+        if (!TryExtractTraversalPath(message, out var path)) return;
 
         _visitedNodes++;
-        _currentNode = ExtractNodeName(message);
+        _currentNode = ExtractNodeName(path);
     }
 
-    private static string ExtractNodeName(string visitingMessage)
+    private static string ExtractNodeName(string traversalPath)
     {
-        var path = visitingMessage["Visiting:".Length..].Trim();
-        if (string.IsNullOrWhiteSpace(path)) return "-";
+        if (string.IsNullOrWhiteSpace(traversalPath)) return "-";
 
-        var parts = path.Split("->", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        return parts.Length == 0 ? path : parts[^1];
+        var parts = traversalPath.Split("->", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length == 0 ? traversalPath : parts[^1];
     }
 
     private void BuildReplayLookup()
@@ -465,5 +554,28 @@ public partial class Home
             _expandedFolders.Add(parent);
             parent = FindParentFolder(parent);
         }
+    }
+
+    private static string ToSortText(SortKey key) => key switch
+    {
+        SortKey.Name => "名稱",
+        SortKey.Size => "大小",
+        SortKey.Extension => "類型",
+        _ => "預設"
+    };
+
+    private void LogCommand(string message)
+    {
+        AppendConsoleHtml(BuildLogHtml($"[Command]執行 {message}", false));
+    }
+
+    private void LogUndo(string message)
+    {
+        AppendConsoleHtml(BuildLogHtml($"[Undo]恢復 {message}", false, "text-warning"));
+    }
+
+    private void LogRedo(string message)
+    {
+        AppendConsoleHtml(BuildLogHtml($"[Redo]重做 {message}", false, "text-info"));
     }
 }

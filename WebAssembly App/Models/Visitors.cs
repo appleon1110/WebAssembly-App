@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace CloudFileManager.Models
 {
-    // 1. 計算總容量 (現在支援 logging with isMatch flag)
     public class SizeCalculator : IFileSystemVisitor
     {
         public double TotalSize { get; private set; }
@@ -21,31 +20,30 @@ namespace CloudFileManager.Models
         public void Visit(Folder folder)
         {
             _path.Push(folder.Name);
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _path.Reverse())}", false);
+            _log?.Invoke($"搜尋目錄: {string.Join(" -> ", _path.Reverse())}", false);
             foreach (var child in folder.Children) child.Accept(this);
             _path.Pop();
         }
 
         public void Visit(WordFile file)
         {
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _path.Reverse())} -> {file.Name}", false);
+            _log?.Invoke($"掃描檔案: {string.Join(" -> ", _path.Reverse())} -> {file.Name}", false);
             TotalSize += file.SizeKB;
         }
 
         public void Visit(ImageFile file)
         {
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _path.Reverse())} -> {file.Name}", false);
+            _log?.Invoke($"掃描檔案: {string.Join(" -> ", _path.Reverse())} -> {file.Name}", false);
             TotalSize += file.SizeKB;
         }
 
         public void Visit(TextFile file)
         {
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _path.Reverse())} -> {file.Name}", false);
+            _log?.Invoke($"掃描檔案: {string.Join(" -> ", _path.Reverse())} -> {file.Name}", false);
             TotalSize += file.SizeKB;
         }
     }
 
-    // 2. 副檔名搜尋 (現在支援 logging with isMatch flag)
     public class FileSearcher : IFileSystemVisitor
     {
         private readonly string _ext;
@@ -62,26 +60,26 @@ namespace CloudFileManager.Models
         public void Visit(Folder folder)
         {
             _pathStack.Push(folder.Name);
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _pathStack.Reverse())}", false);
+            _log?.Invoke($"搜尋目錄: {string.Join(" -> ", _pathStack.Reverse())}", false);
             foreach (var child in folder.Children) child.Accept(this);
             _pathStack.Pop();
         }
 
         public void Visit(WordFile file)
         {
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _pathStack.Reverse())} -> {file.Name}", false);
+            _log?.Invoke($"掃描檔案: {string.Join(" -> ", _pathStack.Reverse())} -> {file.Name}", false);
             CheckFile(file.Name);
         }
 
         public void Visit(ImageFile file)
         {
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _pathStack.Reverse())} -> {file.Name}", false);
+            _log?.Invoke($"掃描檔案: {string.Join(" -> ", _pathStack.Reverse())} -> {file.Name}", false);
             CheckFile(file.Name);
         }
 
         public void Visit(TextFile file)
         {
-            _log?.Invoke($"Visiting: {string.Join(" -> ", _pathStack.Reverse())} -> {file.Name}", false);
+            _log?.Invoke($"掃描檔案: {string.Join(" -> ", _pathStack.Reverse())} -> {file.Name}", false);
             CheckFile(file.Name);
         }
 
@@ -91,7 +89,6 @@ namespace CloudFileManager.Models
             {
                 var fullPath = string.Join("/", _pathStack.Reverse()) + "/" + fileName;
                 FoundPaths.Add(fullPath);
-                // 傳 isMatch = true
                 _log?.Invoke($"[符合] {fullPath}", true);
             }
         }
