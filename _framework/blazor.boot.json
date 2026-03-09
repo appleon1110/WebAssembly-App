@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "WebAssembly App",
   "resources": {
-    "hash": "sha256-SmIXC/F/HmavzdsIuIEUDrpd9m5t/CvIwO/9xLzHorg=",
+    "hash": "sha256-kvVRY6s4B0N6T0T3k6i5AUb7SNpzbkze94zAM0qkxDU=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-NljIbpK/1KCj0+knpX8U77Rbl5kTtfFIuFjK7AuczEw="
     },
@@ -38,7 +38,7 @@
       "System.ComponentModel.wasm": "sha256-eASv6/hAr1v6bTy5jSaaiSY0JytxSFaCOpEL+lcGP7A=",
       "System.Console.wasm": "sha256-1jAcOxwkqRK9HL4LHO4EJ1L/4znRnSnMj0ryYAXbXOM=",
       "System.Diagnostics.DiagnosticSource.wasm": "sha256-EqKF6y7kqXdVRR1KAmQMGcj6NtVvFHUzRD3RiXoWzrA=",
-      "System.Linq.wasm": "sha256-AjQTOMGq6p6ifcuSeFwmW12i/xo3zcq8OFa4dEwqpyw=",
+      "System.Linq.wasm": "sha256-85G31jVs9Y1Vj32F0O7N1GTFB8ouc0M5ByO2kR3E4sc=",
       "System.Memory.wasm": "sha256-ig3xZT0M1BvhafYi5XtwQIoTMrSfH9TtQKq4lRFvGQ8=",
       "System.Net.Http.Json.wasm": "sha256-i0uwRC3rQUc5RbcKA73z4S+4c3SFppM+0opgr87PQyQ=",
       "System.Net.Http.wasm": "sha256-vCFFdpr4T7mHmzt7jJyi0ewNkhwZXgEhRjyQMC4m4k4=",
@@ -48,7 +48,7 @@
       "System.Private.Xml.Linq.wasm": "sha256-7+4th/0ne7V14pIMUSr9dbY0Gm98KXXRhL3uAyDbjrs=",
       "System.Private.Xml.wasm": "sha256-iDCEXTFzzCxXCFUi7Mf1mGFDl0Ki2SMXyFJ9tgqUqks=",
       "System.Runtime.InteropServices.JavaScript.wasm": "sha256-K5lP30ZHOIvoCedni4gfho494UjvhcM55fAoEptz6iU=",
-      "System.Runtime.wasm": "sha256-YOw46Ook2TlxPm90y+UxdHlfJaXk2qlezp/BY/zNFew=",
+      "System.Runtime.wasm": "sha256-KUfB39Yvz1WYyf+p5pei2/QVxFfSFQ8By5ekZi+hRMU=",
       "System.Text.Encodings.Web.wasm": "sha256-QlEAY71V5tn3FS4QI+N/MDAf43l3aWX0SFMMJbfw3C8=",
       "System.Text.Json.wasm": "sha256-nQuyG44ie4lE1ivS9v0Y2O9Ta2UjMqaRq0CEMGRtois=",
       "System.Text.RegularExpressions.wasm": "sha256-93lEuM6z1mkYQ83kbZTL1fsPozGa2ff8zAGZHX2c/wo=",
@@ -57,7 +57,7 @@
       "System.Xml.XDocument.wasm": "sha256-oqGoFTmyOsIKjg4tPcifvVSWE3cDkB/yg3VktXqVW58=",
       "System.Xml.XmlSerializer.wasm": "sha256-P1V3J39StjBXXRLkH206L89JwcwBLcrDSz3fCXTSB8Y=",
       "System.Private.CoreLib.wasm": "sha256-WRtwIQtOmF2rySt8jb8Yy6BPALqJJNeskV37k33UTYc=",
-      "WebAssembly App.wasm": "sha256-aiTFqmL1j4DRpxUMb0PV9e2U+5Y21PbQ9yFD4dlY6CQ="
+      "WebAssembly App.wasm": "sha256-vVrLlEy3Cg39jEqZsVy59MIUsLFvBZ39FkaciIzFYXI="
     }
   },
   "cacheBootResources": true,
