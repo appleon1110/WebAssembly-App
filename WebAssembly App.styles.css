@@ -389,3 +389,26 @@ main[b-burbixt2t8] {
         white-space: nowrap;
     }
 }
+
+/* ===== Observer panel ===== */
+.observer-panel[b-956viydfrw] {
+    border: 1px solid #dfe7f7;
+    border-radius: 10px;
+    background: #f6f8fc;
+    padding: 10px 12px;
+}
+
+.observer-title[b-956viydfrw] {
+    font-size: 1.25rem; /* 與 h5 一致 */
+    font-weight: 600;
+}
+
+.observer-body[b-956viydfrw] {
+    background: #eef2f8;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.observer-progress[b-956viydfrw] {
+    height: 8px;
+}
