@@ -97,7 +97,7 @@
     <div class="row">
         <div class="col-12 col-ratio-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-dark text-white">目錄結構</div>
+                <div class="card-header bg-dark text-white">檔案階層(Composite)</div>
                 <div class="card-body">
                     <FileNode Items="rootItems"
                               SelectedItem="selectedItem"
@@ -109,44 +109,51 @@
         </div>
 
         <div class="col-12 col-ratio-7">
-            <div class="card shadow-sm border-primary h-auto">
+            <!-- 訪問者操作（獨立區塊） -->
+            <div class="card shadow-sm border-primary mb-3">
                 <div class="card-body">
-                    <h5>系統操作</h5>
-                    @* 按鈕改成執行中禁用，避免重複觸發 *@
+                    <h5>訪問者操作(Visitor)</h5>
+
                     <button class="btn btn-outline-primary w-100 mb-2" @onclick="RunSizeCalc" disabled="@_isTraversing">⚡ 計算總大小</button>
 
                     <div class="d-grid mb-2">
                         <button class="btn btn-outline-success" @onclick="RunExportXml" disabled="@_isTraversing">📄 匯出 XML</button>
                     </div>
-                    <div class="input-group mb-2">
-                        <input type="text" class="form-control" placeholder=".docx" @bind="searchExt" />
+
+                    <div class="input-group mb-0">
+                        <input type="search" class="form-control" placeholder="例如 .docx" @bind="searchExt" />
                         <button class="btn btn-outline-secondary" @onclick="RunSearch" disabled="@_isTraversing">🔍 副檔名搜尋</button>
                     </div>
+                </div>
+            </div>
 
+            <!-- 監控（獨立區塊，包含 Console） -->
+            <div class="card shadow-sm border-primary h-auto">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">📡 監控 (Observer)</h5>
+                        @if (_isTraversing)
+                        {
+                            <span class="badge bg-primary">LIVE</span>
+                        }
+                    </div>
 
-                    @* 小型監控視窗：放在 Console 前面 *@
-                    <div class="p-2 bg-light rounded border mb-2" style="font-size: 0.9rem;">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <div class="fw-semibold">📡 監控 (Observer)</div>
-                            @if (_isTraversing)
-                            {
-                                <span class="badge bg-primary">LIVE</span>
-                            }
+                    <div class="observer-panel mb-2">
+                        <div class="observer-body">
+                            <div class="small text-muted">目前節點</div>
+                            <div class="fw-semibold text-primary text-truncate mb-2">@_currentNode</div>
+
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>探訪進度</span>
+                                <span>@_progressPercent%</span>
+                            </div>
+
+                            <div class="progress observer-progress" role="progressbar" aria-valuenow="@_progressPercent" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar" style="width:@($"{_progressPercent}%")"></div>
+                            </div>
+
+                            <div class="text-end small text-muted mt-1">@_visitedNodes/@_totalNodes Nodes</div>
                         </div>
-
-                        <div class="small text-muted">目前節點</div>
-                        <div class="fw-semibold text-primary text-truncate mb-1">@_currentNode</div>
-
-                        <div class="d-flex justify-content-between small mb-1">
-                            <span>探訪進度</span>
-                            <span>@_progressPercent%</span>
-                        </div>
-
-                        <div class="progress" style="height: 6px;" role="progressbar" aria-valuenow="@_progressPercent" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar" style="width:@($"{_progressPercent}%")"></div>
-                        </div>
-
-                        <div class="text-end small text-muted mt-1">@_visitedNodes/@_totalNodes Nodes</div>
                     </div>
 
                     <div class="p-3 bg-light rounded console-box">

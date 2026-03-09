@@ -226,3 +226,26 @@
         white-space: nowrap;
     }
 }
+
+/* ===== Observer panel ===== */
+.observer-panel {
+    border: 1px solid #dfe7f7;
+    border-radius: 10px;
+    background: #f6f8fc;
+    padding: 10px 12px;
+}
+
+.observer-title {
+    font-size: 1.25rem; /* 與 h5 一致 */
+    font-weight: 600;
+}
+
+.observer-body {
+    background: #eef2f8;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.observer-progress {
+    height: 8px;
+}
