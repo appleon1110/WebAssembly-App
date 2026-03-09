@@ -1,141 +1,9 @@
-/* pill toolbar (scoped to Home.razor) */
-.toolbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+/* =========================================================
+   Home.razor.css
+   - Scoped styles for Home page (Blazor CSS isolation)
+   ========================================================= */
 
-.pill-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 14px;
-    border: 1px solid #e7eefc;
-    background: #fff;
-    color: #333;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all .12s ease-in-out;
-    box-shadow: none;
-}
-
-    .pill-btn .pill-icon {
-        width: 16px;
-        height: 16px;
-        display: inline-block;
-        flex: 0 0 16px;
-    }
-
-    .pill-btn:hover {
-        background: #f3f9ff;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 18px rgba(25,118,255,0.06);
-    }
-
-    .pill-btn[disabled] {
-        opacity: .45;
-        pointer-events: none;
-        background: #fafafa;
-        border-color: #f0f0f0;
-        transform: none;
-        box-shadow: none;
-    }
-
-    .pill-btn.active {
-        background: #1976ff;
-        color: #fff;
-        border-color: rgba(0,0,0,0.04);
-        box-shadow: 0 6px 18px rgba(25,118,255,0.12);
-    }
-
-    .pill-btn .badge-count {
-        margin-left: 6px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 18px;
-        height: 18px;
-        padding: 0 5px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 600;
-        color: #fff;
-    }
-
-.badge-urgent {
-    background: #ff4d4f;
-}
-
-.badge-work {
-    background: #0d6efd;
-}
-
-.badge-personal {
-    background: #28a745;
-}
-
-.toolbar-sep {
-    display: none;
-}
-/* 舊版已還原為 btn-toolbar，隱藏自訂分隔 */
-.btn-toolbar .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-    .btn-toolbar .btn svg {
-        vertical-align: middle;
-    }
-
-.btn-toolbar .badge {
-    font-weight: 600;
-}
-
-/* Home 專屬：工具列外框 */
-.toolbar-box {
-    border: 1px solid #e6f3ff;
-    border-radius: 8px;
-    padding: 8px 12px;
-    background: #ffffff;
-    box-shadow: 0 1px 2px rgba(16,24,40,0.02);
-}
-
-    /* 工具列排版 */
-    .toolbar-box .btn-toolbar {
-        gap: 8px;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        flex-wrap: nowrap;
-    }
-
-    .toolbar-box .btn-group {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-    }
-
-        /* 群組分隔線 */
-        .toolbar-box .btn-group + .btn-group::before {
-            content: "";
-            position: absolute;
-            left: -10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 1px;
-            height: 28px;
-            background: #e6e6e6;
-            border-radius: 1px;
-        }
-
-        .toolbar-box .btn-group + .btn-group {
-            padding-left: 12px;
-            margin-left: 6px;
-        }
-
-/* 按鈕與 icon 對齊 */
+/* ===== Toolbar: shared button style ===== */
 .btn-toolbar .btn {
     display: inline-flex;
     align-items: center;
@@ -144,20 +12,61 @@
     padding-right: 10px;
 }
 
-    .btn-toolbar .btn svg,
-    .btn-toolbar .btn > svg {
-        width: 14px;
-        height: 14px;
-        flex: 0 0 14px;
-        vertical-align: middle;
-        margin-right: 6px;
-    }
+.btn-toolbar .btn svg,
+.btn-toolbar .btn > svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    vertical-align: middle;
+    margin-right: 6px;
+}
 
 .btn-toolbar .badge {
     font-weight: 600;
 }
 
-/* 群組內按鈕接縫 */
+/* ===== Toolbar container ===== */
+.toolbar-box {
+    border: 1px solid #e6f3ff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+}
+
+.toolbar-box .btn-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 8px;
+}
+
+.toolbar-box .btn-group {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 群組分隔線 */
+.toolbar-box .btn-group + .btn-group::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 28px;
+    background: #e6e6e6;
+    border-radius: 1px;
+}
+
+.toolbar-box .btn-group + .btn-group {
+    padding-left: 12px;
+    margin-left: 6px;
+}
+
+/* 群組內按鈕接縫（桌面版） */
 .toolbar-box .btn-group .btn + .btn {
     margin-left: -1px;
     border-left: 0 !important;
@@ -194,7 +103,20 @@
     vertical-align: middle;
 }
 
-/* 版面比例：6/13 與 7/13 */
+/* （保留）舊 badge 色票，可供後續擴充 */
+.badge-urgent {
+    background: #ff4d4f;
+}
+
+.badge-work {
+    background: #0d6efd;
+}
+
+.badge-personal {
+    background: #28a745;
+}
+
+/* ===== Layout ratio ===== */
 @media (min-width: 768px) {
     .col-ratio-7 {
         flex: 0 0 calc(100% * 7 / 13);
@@ -207,10 +129,12 @@
     }
 }
 
-/* Console 區塊 */
+/* ===== Console ===== */
 .console-box {
     min-height: 150px;
-    overflow: auto;
+    max-height: 360px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .console-output {
@@ -220,15 +144,15 @@
     overflow-wrap: anywhere;
 }
 
-    /* 匯出 XML 時內嵌 pre 也要能斷行 */
-    .console-output pre {
-        margin: 0;
-        white-space: pre-wrap;
-        word-break: break-word;
-        overflow-wrap: anywhere;
-    }
+/* 匯出 XML 時內嵌 pre 也要能斷行 */
+.console-output pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
 
-/* 小螢幕 */
+/* ===== Mobile ===== */
 @media (max-width: 576px) {
     .toolbar-box {
         padding: 6px;
