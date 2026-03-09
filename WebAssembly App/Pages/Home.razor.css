@@ -137,11 +137,26 @@
     overflow-x: hidden;
 }
 
-.console-output {
-    margin: 0;
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
+.console-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #dbe6ff;
+}
+
+.console-dot {
+    color: #2f7cff;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.console-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #2f7cff;
 }
 
 /* 匯出 XML 時內嵌 pre 也要能斷行 */
