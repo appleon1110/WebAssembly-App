@@ -14,7 +14,7 @@
   
 | Web 展示 | 自動化測試 | RWD 手機版本 |
 | :---: | :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/ed62acc2-7aec-40f3-8854-33b83d24efb3" width="100%" /> | <img src="https://github.com/user-attachments/assets/50549e5a-c66a-45ab-ba59-b50517da2e37" width="100%" /> | <img src="https://github.com/user-attachments/assets/dd3ec27b-a3d4-45fe-be7f-a4eac846ca4c" width="100%" /> |
+| <img width="1658" height="991" alt="image" src="https://github.com/user-attachments/assets/3a27a6be-230a-475a-bb53-af9ef611ffb8" /> | <img src="https://github.com/user-attachments/assets/50549e5a-c66a-45ab-ba59-b50517da2e37" width="100%" /> | <img width="868" height="1887" alt="image" src="https://github.com/user-attachments/assets/a373ce02-053c-420a-949a-8a4bb803120f" /> |
 
 重點示範：
 
